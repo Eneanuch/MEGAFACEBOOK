@@ -15,5 +15,6 @@ def main_page():
 def handle_bad_request(e):
     return render_template("error.html", error=e.name)
 
+
 if __name__ == '__main__':
     app.run(port=8080, host='127.0.0.1')

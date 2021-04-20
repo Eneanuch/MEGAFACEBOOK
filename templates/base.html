@@ -31,10 +31,12 @@
         <script src="{{ url_for('static', filename='js/npm.js') }}"></script>
     </head>
     <header>
+
         <div class="header">
-            <a class="text-start"></a>
-            <a class="text-center">MEGAFACEBOOK</a>
-            <a class="text-end">Лучшая соцсеть</a>
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/logo-min.png') }}" class="text-start wh-130 inl-block">
+                <span class="md-24 inl-block">MEGAFACEBOOK</span>
+            </a>
         </div>
     </header>
     <body>
@@ -49,7 +51,7 @@
                 <a class="btn btn-sq-lg btn-primary-g trans" href="/my_profile">
                     <div class="elements">
                         <span class="material-icons-outlined">person</span><br>
-                        <span class="main-menu-text">Мой профиль</span>
+                        <span class="main-menu-text">Мой <br> профиль</span>
                     </div>
                 </a>
                 <a class="btn btn-sq-lg btn-primary-g trans" href="/friends">

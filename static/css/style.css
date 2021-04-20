@@ -29,6 +29,35 @@
     font-style: normal;
 }
 
+body {
+
+    font-family: 'Montserrat';
+}
+
+a {
+
+}
+span {
+
+}
+
+.header {
+    position: relative;
+    display: block;
+    text-align: center;
+    width: 100%;
+    color: #fff;
+    background-image: linear-gradient(-225deg, #3D4E81 0%, #5753C9 48%, #6E7FF3 100%);
+    border-color: #6E7FF3;
+}
+.header a {
+    text-decoration: none;
+    color: #fff;
+}
+a {
+
+}
+
 .btn-primary-g {
   color: #fff;
   background-image: linear-gradient(-225deg, #3D4E81 0%, #5753C9 48%, #6E7FF3 100%);
@@ -60,12 +89,20 @@
 .md-120 { font-size: 96px; }
 .md-148 { font-size: 96px; }
 
+.wh-130 {
+    width: 130px;
+    height: 130px;
+}
+.inl-block {
+    display: inline-block;
+}
 
 .sidebar {
     display: block;
     margin-left: 40px;
     width: 250px;
     min-width: 250px;
+    margin-top: 10%;
 }
 
 .sidebar a {
@@ -89,7 +126,7 @@
 }
 
 .main-wrap {
-
+    text-decoration: none;
 }
 
 .main-menu-text {
