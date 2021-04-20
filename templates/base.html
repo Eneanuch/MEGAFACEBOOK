@@ -6,16 +6,66 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+        <!-- https://material.io/resources/icons/?style=baseline -->
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons"
+              rel="stylesheet">
 
+        <!-- https://material.io/resources/icons/?style=outline -->
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined"
+              rel="stylesheet">
+
+        <!-- https://material.io/resources/icons/?style=round -->
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Round"
+              rel="stylesheet">
+
+        <!-- https://material.io/resources/icons/?style=sharp -->
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Sharp"
+              rel="stylesheet">
+
+        <!-- https://material.io/resources/icons/?style=twotone -->
+        <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Two+Tone"
+              rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}" />
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}" />
         <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
         <script src="{{ url_for('static', filename='js/npm.js') }}"></script>
     </head>
     <header>
-
+        <div class="header">
+            <a class="text-start"></a>
+            <a class="text-center">MEGAFACEBOOK</a>
+            <a class="text-end">Лучшая соцсеть</a>
+        </div>
     </header>
     <body>
+        <div class="sidebar">
+            <div class="main-buttons">
+                <a class="btn btn-sq-lg btn-primary-g trans" href="/main">
+                    <div class="elements">
+                        <span class="material-icons-outlined">home</span><br>
+                        <span class="main-menu-text">Главная</span>
+                    </div>
+                </a>
+                <a class="btn btn-sq-lg btn-primary-g trans" href="/my_profile">
+                    <div class="elements">
+                        <span class="material-icons-outlined">person</span><br>
+                        <span class="main-menu-text">Мой профиль</span>
+                    </div>
+                </a>
+                <a class="btn btn-sq-lg btn-primary-g trans" href="/friends">
+                    <div class="elements">
+                        <span class="material-icons-outlined">group</span><br>
+                        <span class="main-menu-text">Друзья</span>
+                    </div>
+                </a>
+                <a class="btn btn-sq-lg btn-primary-g trans" href="/messages">
+                    <div class="elements">
+                        <span class="material-icons-outlined">chat_bubble_outline</span><br>
+                        <span class="main-menu-text">Сообщения</span>
+                    </div>
+                </a>
+            </div>
+        </div>
         <div class="main-wrap">
             {% block content %}
             {% endblock %}

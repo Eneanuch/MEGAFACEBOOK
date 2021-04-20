@@ -29,6 +29,63 @@
     font-style: normal;
 }
 
+.sidebar {
+    display: block;
+    margin-left: 40px;
+    width: 250px;
+    min-width: 250px;
+}
+
+.sidebar a {
+    text-align: center;
+    width: 113px!important;
+    height: 113px!important;
+    float: left;
+    background: transparent;
+    color: #8492a6;
+    margin: 0 0 14px 10px;
+}
+.sidebar .elements {
+    margin-top: 20%;
+}
+
+.btn-primary-g {
+  color: #fff;
+  background-image: linear-gradient(-225deg, #3D4E81 0%, #5753C9 48%, #6E7FF3 100%);
+  border-color: #6E7FF3;
+}
+
+.btn-primary-g:hover {
+  color: #fff;
+  background-image: linear-gradient(-225deg, #4a5b91 0%, #6460d7 48%, #8291fe 100%);
+  box-shadow: 0 0 0 3px rgba(71, 83, 197, 0.3);
+  border-color: #6E7FF3;
+}
+
+.btn-primary-g.focus, .btn-primary-g:focus, .btn-primary-g.active, .btn-primary-g:active, .open>.dropdown-toggle.btn-primary-g, .btn-primary-g.active.focus, .btn-primary-g.active:focus, .btn-primary-g.active:hover, .btn-primary-g:active.focus, .btn-primary-g:active:focus, .btn-primary-g:active:hover, .open>.dropdown-toggle.btn-primary-g.focus, .open>.dropdown-toggle.btn-primary-g:focus, .open>.dropdown-toggle.btn-primary-g:hover {
+  color: #fff;
+  background-image: linear-gradient(-225deg, #2f3f70 0%, #4440b4 48%, #596add 100%);
+  box-shadow: 0 0 0 3px rgba(71, 83, 197, 0.3);
+  border-color: #596add;
+}
+
+.trans:hover {
+    transition: .3s;
+}
+.trans {
+    transition: .3s;
+}
+
 .main-wrap {
 
 }
+
+.main-menu-text {
+
+}
+
+.text-block {
+
+}
+
+// TODO: text-block, main-wrap,
