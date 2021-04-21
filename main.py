@@ -2,6 +2,7 @@ from managers import FuncManager, DBManager, TranslateManager
 from flask import url_for, Flask, render_template, send_from_directory
 from json import loads
 import os
+# aboba
 
 app = Flask(__name__)
 
