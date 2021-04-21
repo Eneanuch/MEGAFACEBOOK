@@ -42,30 +42,14 @@
     <body>
         <div class="sidebar">
             <div class="main-buttons">
-                <a class="btn btn-sq-lg btn-primary-g trans" href="/main">
+                {% for button in sidebar['sidebar'] %}
+                <a class="btn btn-sq-lg btn-primary-g trans" href="{{ button['url'] }}">
                     <div class="elements">
-                        <span class="material-icons-outlined">home</span><br>
-                        <span class="main-menu-text">Главная</span>
+                        <span class="material-icons-outlined">{{ button['icon'] }}</span><br>
+                        <span class="main-menu-text">{{ button['title'] }}</span>
                     </div>
                 </a>
-                <a class="btn btn-sq-lg btn-primary-g trans" href="/my_profile">
-                    <div class="elements">
-                        <span class="material-icons-outlined">person</span><br>
-                        <span class="main-menu-text">Мой <br> профиль</span>
-                    </div>
-                </a>
-                <a class="btn btn-sq-lg btn-primary-g trans" href="/friends">
-                    <div class="elements">
-                        <span class="material-icons-outlined">group</span><br>
-                        <span class="main-menu-text">Друзья</span>
-                    </div>
-                </a>
-                <a class="btn btn-sq-lg btn-primary-g trans" href="/messages">
-                    <div class="elements">
-                        <span class="material-icons-outlined">chat_bubble_outline</span><br>
-                        <span class="main-menu-text">Сообщения</span>
-                    </div>
-                </a>
+                {% endfor %}
             </div>
         </div>
         <div class="main-wrap">

@@ -1,0 +1,25 @@
+{
+    "sidebar":
+    [
+      {
+        "title": "Главная",
+        "icon": "home",
+        "url": "/"
+      },
+      {
+        "title": "Мой \n профиль",
+        "icon": "person",
+        "url": "/my_profile"
+      },
+      {
+        "title": "Друзья",
+        "icon": "group",
+        "url": "/friends"
+      },
+      {
+        "title": "Сообщения",
+        "icon": "chat_bubble_outline",
+        "url": "/messages"
+      }
+    ]
+}

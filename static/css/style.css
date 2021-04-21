@@ -130,7 +130,7 @@ a {
 }
 
 .main-menu-text {
-
+    white-space: pre-wrap;
 }
 
 .text-block {
