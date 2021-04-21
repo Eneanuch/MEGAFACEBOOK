@@ -32,6 +32,7 @@ def favicon():
 
 @app.route('/about')
 def about():
+    parameters['title'] = "MEGAFACEBOOK: О нас"
     return render_template("information.html", **parameters)
 
 
