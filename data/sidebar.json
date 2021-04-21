@@ -20,6 +20,11 @@
         "title": "Сообщения",
         "icon": "chat_bubble_outline",
         "url": "/messages"
+      },
+      {
+        "title": "О нас",
+        "icon": "info",
+        "url": "/about"
       }
     ]
 }
