@@ -25,6 +25,11 @@
         "title": "О нас",
         "icon": "info",
         "url": "/about"
+      },
+      {
+        "title": "Помощь",
+        "icon": "help",
+        "url": "/help"
       }
     ]
 }
