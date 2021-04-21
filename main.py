@@ -1,6 +1,7 @@
 from managers import FuncManager, DBManager, TranslateManager
-from flask import url_for, Flask, render_template
+from flask import url_for, Flask, render_template, send_from_directory
 from json import loads
+import os
 
 app = Flask(__name__)
 
@@ -21,6 +22,11 @@ def main_page():
 def handle_bad_request(e):
     parameters['title'] = f"MEGAFACEBOOK: Error {e}"
     return render_template("error.html", error=e.name, **parameters)
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'static/favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 def load_sidebar_elem():

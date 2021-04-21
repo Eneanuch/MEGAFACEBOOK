@@ -43,12 +43,12 @@
         <div class="sidebar">
             <div class="main-buttons">
                 {% for button in sidebar['sidebar'] %}
-                <a class="btn btn-sq-lg btn-primary-g trans" href="{{ button['url'] }}">
-                    <div class="elements">
-                        <span class="material-icons-outlined">{{ button['icon'] }}</span><br>
-                        <span class="main-menu-text">{{ button['title'] }}</span>
-                    </div>
-                </a>
+                    <a class="btn btn-sq-lg btn-primary-g trans" href="{{ button['url'] }}">
+                        <div class="elements">
+                            <span class="material-icons-outlined">{{ button['icon'] }}</span><br>
+                            <span class="main-menu-text">{{ button['title'] }}</span>
+                        </div>
+                    </a>
                 {% endfor %}
             </div>
         </div>
