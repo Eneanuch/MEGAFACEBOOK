@@ -98,6 +98,12 @@ def about():
     return render_template("information.html", **parameters)
 
 
+@app.route('/help')
+def help_page():
+    parameters['title'] = "MEGAFACEBOOK: Помощь"
+    return render_template("help.html", **parameters)
+
+
 def load_sidebar_elem():
     global sidebar_elements
     with open("data/sidebar.json", "rt", encoding="utf8") as f:
