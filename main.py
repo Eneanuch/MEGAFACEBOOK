@@ -7,7 +7,10 @@ import os
 from data import db_session
 from data.users import User
 from data.messages import Messages
+from data.posts import Posts
+from data.friends import Friends
 from forms.user import RegisterForm, LoginForm
+from forms.post import PostForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
