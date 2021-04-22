@@ -121,6 +121,61 @@ def load_sidebar_elem():
     with open("data/sidebar.json", "rt", encoding="utf8") as f:
         sidebar_elements = loads(f.read())
         parameters['sidebar'] = sidebar_elements
+        
+
+@app.route('/posts', methods=['GET', 'POST'])
+@login_required
+def add_news():
+    form = PostForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        post = Posts()
+        post.text = form.text.data
+        post.author = current_user.id
+        db_sess.add(post)
+        db_sess.commit()
+        return redirect('/')
+    parameters['title'] = 'Опубликовать пост'
+    parameters['form'] = form
+    return render_template('post.html', **parameters)
+
+
+@app.route('/posts/<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_news(id):
+    form = NewsForm()
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
+        if post:
+            form.text.data = post.text
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
+        if post:
+            post.text = form.text.data
+            db_sess.commit()
+            return redirect('/')
+        else:
+            abort(404)
+    parameters['title'] = 'Редактировать поста'
+    parameters['form'] = form
+    return render_template('post.html', **parameters)
+
+
+@app.route('/posts_delete/<int:id>', methods=['GET', 'POST'])
+@login_required
+def news_delete(id):
+    db_sess = db_session.create_session()
+    post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
+    if post:
+        db_sess.delete(post)
+        db_sess.commit()
+    else:
+        abort(404)
+    return redirect('/')
 
 
 if __name__ == '__main__':
