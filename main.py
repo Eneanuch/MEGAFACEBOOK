@@ -113,4 +113,4 @@ def load_sidebar_elem():
 
 if __name__ == '__main__':
     load_sidebar_elem()
-    app.run(port=8080, host='127.0.0.1')
+    app.run(port=8080, host='127.0.1.1')
