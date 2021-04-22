@@ -28,14 +28,17 @@ def reqister():
                                    form=form,
                                    message="Пароли не совпадают")
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data).first():
+        if db_sess.query(User).filter(User.email == form.email.data | User.phone == form.phone.data).first():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
             name=form.name.data,
+            surname=form.surname.data,
             email=form.email.data,
-            about=form.about.data
+            phone=form.phone.data,
+            birthday=form.birthday.data,
+            city=form.city.data
         )
         user.set_password(form.password.data)
         db_sess.add(user)
