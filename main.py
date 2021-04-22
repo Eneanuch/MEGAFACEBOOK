@@ -82,7 +82,7 @@ def main_page():
 @app.errorhandler(400)
 @app.errorhandler(404)
 def handle_bad_request(e):
-    parameters['title'] = f"MEGAFACEBOOK: Error {e}"
+    parameters['title'] = f"MEGAFACEBOOK: Error {e.name}"
     return render_template("error.html", error=e.name, **parameters)
 
 
