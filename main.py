@@ -11,6 +11,7 @@ from forms.user import RegisterForm, LoginForm
 from forms.jobs import NewsForm
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -19,19 +20,21 @@ sidebar_elements = list()
 parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
 
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
+    parameters['title'] = "MEGAFACEBOOK: Регистрация"
     form = RegisterForm()
     if form.validate_on_submit():
         if form.password.data != form.password_again.data:
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Пароли не совпадают")
+            parameters['form'] = form
+            parameters['message'] = "Пароли не совпадают"
+            return render_template('register.html', **parameters)
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == form.email.data | User.phone == form.phone.data).first():
-            return render_template('register.html', title='Регистрация',
-                                   form=form,
-                                   message="Такой пользователь уже есть")
+            parameters['form'] = form
+            parameters['message'] = "Такой пользователь уже есть"
+            return render_template('register.html', **parameters)
         user = User(
             name=form.name.data,
             surname=form.surname.data,
@@ -44,7 +47,8 @@ def reqister():
         db_sess.add(user)
         db_sess.commit()
         return redirect('/login')
-    return render_template('register.html', title='Регистрация', form=form)
+    parameters['form'] = form
+    return render_template('register.html', **parameters)
 
 
 @login_manager.user_loader
@@ -55,6 +59,7 @@ def load_user(user_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    parameters['title'] = "MEGAFACEBOOK: Авторизация"
     form = LoginForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -62,10 +67,12 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             return redirect("/")
+        parameters['message'] = "Неправильный логин или пароль"
+        parameters["form"] = form
         return render_template('login.html',
-                               message="Неправильный логин или пароль",
-                               form=form)
-    return render_template('login.html', title='Авторизация', form=form)
+                               **parameters)
+    parameters["form"] = form
+    return render_template('login.html', **parameters)
 
 
 @app.route('/logout')
