@@ -6,9 +6,8 @@ import os
 
 from data import db_session
 from data.users import User
-from data.jobs import Jobs
+from data.messages import Messages
 from forms.user import RegisterForm, LoginForm
-from forms.jobs import NewsForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
