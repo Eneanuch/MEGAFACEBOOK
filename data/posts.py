@@ -15,3 +15,4 @@ class Posts(SqlAlchemyBase):
     date = sqlalchemy.Column(sqlalchemy.DateTime,
                              default=datetime.datetime.now)
     posts = orm.relation("Posts", back_populates='user')
+

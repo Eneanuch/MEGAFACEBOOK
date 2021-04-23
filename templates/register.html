@@ -4,29 +4,31 @@
 
     <h1>Регистрация нового пользователя</h1>
 
-    <form action="" method="post" class="font-family: Montserrat">
+    <form action="" method="post" class="form-registration">
         {{ form.hidden_tag() }}
-        <p>
-            {{ form.name.label }}<br>
-            {{ form.name(class="form-control") }}<br>
-            {% for error in form.name.errors %}
-                <p class="alert alert-danger" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.surname.label }}<br>
-            {{ form.surname(class="form-control") }}<br>
-            {% for error in form.surname.errors %}
-                <p class="alert alert-danger" role="alert">
-                    {{ error }}
-                </p>
-            {% endfor %}
-        </p>
+        <div class="name-surname">
+            <p>
+                {{ form.name.label }}<br>
+                {{ form.name(class="form-control sized") }}<br>
+                {% for error in form.name.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.surname.label }}<br>
+                {{ form.surname(class="form-control sized") }}<br>
+                {% for error in form.surname.errors %}
+                    <p class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </p>
+                {% endfor %}
+            </p>
+        </div>
         <p>
             {{ form.city.label }}<br>
-            {{ form.city(class="form-control") }}<br>
+            {{ form.city(class="form-control sized") }}<br>
             {% for error in form.city.errors %}
                 <p class="alert alert-danger" role="alert">
                     {{ error }}
@@ -35,7 +37,7 @@
         </p>
         <p>
             {{ form.phone.label }}<br>
-            {{ form.phone(class="form-control") }}<br>
+            {{ form.phone(class="form-control sized") }}<br>
             {% for error in form.phone.errors %}
                 <p class="alert alert-danger" role="alert">
                     {{ error }}
@@ -45,7 +47,7 @@
 
         <p>
             {{ form.email.label }}<br>
-            {{ form.email(class="form-control", type="email") }}<br>
+            {{ form.email(class="form-control sized", type="email") }}<br>
             {% for error in form.email.errors %}
                 <p class="alert alert-danger" role="alert">
                     {{ error }}
@@ -54,7 +56,7 @@
         </p>
         <p>
             {{ form.password.label }}<br>
-            {{ form.password(class="form-control", type="password") }}<br>
+            {{ form.password(class="form-control sized", type="password") }}<br>
             {% for error in form.password.errors %}
                 <p class="alert alert-danger" role="alert">
                     {{ error }}
@@ -63,7 +65,7 @@
         </p>
         <p>
             {{ form.password_again.label }}<br>
-            {{ form.password_again(class="form-control", type="password") }}<br>
+            {{ form.password_again(class="form-control sized", type="password") }}<br>
             {% for error in form.password_again.errors %}
                 <p class="alert alert-danger" role="alert">
                     {{ error }}
