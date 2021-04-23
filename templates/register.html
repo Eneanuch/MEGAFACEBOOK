@@ -72,8 +72,13 @@
             {% endfor %}
         </p>
         <p>
-            <label for="photo">Загрузите свой аватар</label><br>
-            <input type="file" class="form-control sized" id="photo" name="file">
+            {{ form.photo.label }}<br>
+            {{ form.photo(class="form-control sized", type="file") }} <br>
+            {% for error in form.photo.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
         </p>
         <p>{{ form.submit(type="submit", class="btn btn-primary trans") }}</p>
         {{message}}
