@@ -10,9 +10,7 @@ span {
 }
 
 .header {
-    position: relative;
     display: block;
-    text-align: center;
     width: 100%;
     color: #fff;
     background-image: linear-gradient(-225deg, #3D4E81 0%, #5753C9 48%, #6E7FF3 100%);
@@ -136,9 +134,13 @@ a {
     margin-right: auto;
 }
 .header-end {
-
-
+    float: right;
+    margin-top: 45px;
+    margin-right: 16px;
 }
-
+.transparently {
+   background-color: #ffffff00;
+   border-color: #ffffff;
+}
 
 // TODO: text-block, main-wrap,
