@@ -2,7 +2,7 @@ import datetime
 
 from data.db_session import global_init
 from managers import FuncManager, DBManager, TranslateManager
-from flask import url_for, Flask, render_template, send_from_directory, redirect, abort
+from flask import url_for, Flask, render_template, send_from_directory, redirect, abort, request
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from json import loads
 import os
@@ -148,7 +148,7 @@ def add_news():
 @app.route('/posts/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_news(id):
-    form = NewsForm()
+    form = PostForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
         post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
