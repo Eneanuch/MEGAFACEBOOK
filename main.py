@@ -1,3 +1,5 @@
+import datetime
+
 from managers import FuncManager, DBManager, TranslateManager
 from flask import url_for, Flask, render_template, send_from_directory, redirect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
@@ -14,6 +16,9 @@ from forms.post import PostForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
+    days=365
+)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
