@@ -86,11 +86,13 @@ a {
 .sidebar .elements {
     margin-top: 20%;
 }
-
+.trans {
+    transition: .3s;
+}
 .trans:hover {
     transition: .3s;
 }
-.trans {
+.trans:active {
     transition: .3s;
 }
 
