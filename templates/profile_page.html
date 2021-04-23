@@ -2,7 +2,12 @@
 
 {% block content %}
 
-
-
+    <div class="profile-header">
+        <!-- img -->
+        <h1>{{ user.name }} {{user.surname }}</h1>
+        <br>
+        <h3>Публикации пользователя</h3>
+        <a>{{ message }}</a>
+    </div>
 
 {% endblock %}

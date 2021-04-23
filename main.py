@@ -96,28 +96,6 @@ def main_page():
     return render_template("main_page.html", **parameters)
 
 
-@app.errorhandler(500)
-@app.errorhandler(400)
-@app.errorhandler(404)
-def handle_bad_request(e):
-    parameters['title'] = f"MEGAFACEBOOK: Error {e.name}"
-    parameters['error'] = e.name
-    return render_template("error.html", **parameters)
-
-
-@app.errorhandler(401)
-def unauthorized(e):
-    parameters['title'] = f"MEGAFACEBOOK: Unauthorized"
-    parameters['error'] = e.name
-    return render_template("unauthorized.html", **parameters)
-
-
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'static/favicon.ico',
-                               mimetype='image/vnd.microsoft.icon')
-
-
 @app.route('/about')
 def about():
     parameters['title'] = "MEGAFACEBOOK: О нас"
@@ -185,10 +163,77 @@ def news_delete(id):
     return redirect('/')
 
 
+@app.route('/profiles/id<int:id>')
+@login_required
+def profile(id):
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id).first()
+    parameters['title'] = f"MEGAFACEBOOK: {user.name} {user.surname}"
+    parameters['user'] = user
+    return render_template("profile_page.html", **parameters)
+
+
 @app.route("/my_profile")
 @login_required
 def my_profile():
-    return redirect(f'/profiles/{current_user.id}')
+    return redirect(f'/profiles/id{current_user.id}')
+
+
+@app.route("/add_friend/id<int:id>")
+@login_required
+def add_friend(id):
+    from_user_id = current_user.id
+    to_user_id = id
+    # проверка на себя же :)
+    if from_user_id != to_user_id:
+
+        db_sess = db_session.create_session()
+        same_friends = db_sess.query(Friends).filter(Friends.from_user == from_user_id,
+                                                     Friends.to_user == to_user_id).first()
+        if same_friends:
+            # если уже была заявка
+            parameters['message'] = "Вы уже отправили заявку в друзья этому пользователю"
+            return render_template("profile_page.html", **parameters)
+        same_friends2 = db_sess.query(Friends).filter(Friends.to_user == from_user_id,
+                                                      Friends.from_user == to_user_id).first()
+        # если была заявка от этого же пользователя
+        friends = Friends(from_user=from_user_id, to_user=to_user_id)
+        if same_friends2:
+            # обновляем в бд данные о дружбе :)
+            same_friends2.accepted = True
+            db_sess.commit()
+            parameters['message'] = "Теперь вы друзья"
+            return render_template("profile_page.html", **parameters)
+        # если пользователь отправил другому заявку
+        db_sess.add(friends)
+        db_sess.commit()
+        parameters['message'] = "Заявка отправлена"
+        return render_template("profile_page.html", **parameters)
+    else:
+        parameters['message'] = "Вы не можете добавить самого себя в друзья"
+        return render_template("profile_page.html", **parameters)
+
+
+@app.errorhandler(500)
+@app.errorhandler(400)
+@app.errorhandler(404)
+def handle_bad_request(e):
+    parameters['title'] = f"MEGAFACEBOOK: Error {e.name}"
+    parameters['error'] = e.name
+    return render_template("error.html", **parameters)
+
+
+@app.errorhandler(401)
+def unauthorized(e):
+    parameters['title'] = f"MEGAFACEBOOK: Unauthorized"
+    parameters['error'] = e.name
+    return render_template("unauthorized.html", **parameters)
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'static/favicon.ico',
+                               mimetype='image/vnd.microsoft.icon')
 
 
 def load_sidebar_elem():

@@ -95,10 +95,11 @@ a {
 }
 
 .main-wrap {
+    margin-top: 20px;
     display: inline-block;
     text-align: center;
     text-decoration: none;
-    width: 75%;
+    width: calc(100% - 400px);
 }
 
 .main-menu-text {

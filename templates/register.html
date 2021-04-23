@@ -73,7 +73,8 @@
             {% endfor %}
         </p>
         <p>
-
+            <label for="photo">Выберите файл</label><br>
+            <input type="file" class="form-control sized" id="photo" name="file">
         </p>
         <p>{{ form.submit(type="submit", class="btn btn-primary trans") }}</p>
         {{message}}
