@@ -1,7 +1,8 @@
 import datetime
 
+from data.db_session import global_init
 from managers import FuncManager, DBManager, TranslateManager
-from flask import url_for, Flask, render_template, send_from_directory, redirect
+from flask import url_for, Flask, render_template, send_from_directory, redirect, abort
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from json import loads
 import os
@@ -25,7 +26,6 @@ login_manager.init_app(app)
 sidebar_elements = list()
 
 parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
-
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -183,6 +183,11 @@ def news_delete(id):
     return redirect('/')
 
 
-if __name__ == '__main__':
+def main():
+    global_init("data/db/main.db")
     load_sidebar_elem()
     app.run(port=8080, host='127.0.1.1')
+
+
+if __name__ == '__main__':
+    main()

@@ -15,3 +15,4 @@ class Friends(SqlAlchemyBase):
     date = sqlalchemy.Column(sqlalchemy.DateTime,
                              default=datetime.datetime.now)
     user = orm.relation('User')
+    friends = orm.relation("Friends", back_populates='user')

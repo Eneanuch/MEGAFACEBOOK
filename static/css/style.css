@@ -66,11 +66,14 @@ a {
 }
 
 .sidebar {
-    display: block;
+    display: inline-block;
     margin-left: 40px;
+    vertical-align: top;
     width: 250px;
+    height: 150%;
     min-width: 250px;
-    margin-top: 10%;
+    margin-right: 40px;
+    margin-top: 40px;
 }
 
 .sidebar a {
@@ -94,8 +97,10 @@ a {
 }
 
 .main-wrap {
+    display: inline-block;
     text-align: center;
     text-decoration: none;
+    width: 75%;
 }
 
 .main-menu-text {

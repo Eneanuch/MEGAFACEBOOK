@@ -15,3 +15,4 @@ class Messages(SqlAlchemyBase):
     date = sqlalchemy.Column(sqlalchemy.DateTime,
                              default=datetime.datetime.now)
     user = orm.relation('User')
+    messages = orm.relation("messages", back_populates='user')

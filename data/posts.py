@@ -10,7 +10,8 @@ class Posts(SqlAlchemyBase):
     id = sqlalchemy.Column(sqlalchemy.Integer,
                            primary_key=True, autoincrement=True)
     author = sqlalchemy.Column(sqlalchemy.Integer, sqlalchemy.ForeignKey("users.id"))
+    user = orm.relation('User')
     text = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     date = sqlalchemy.Column(sqlalchemy.DateTime,
                              default=datetime.datetime.now)
-    user = orm.relation('User')
+    posts = orm.relation("Posts", back_populates='user')
