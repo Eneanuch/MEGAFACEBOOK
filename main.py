@@ -38,7 +38,7 @@ def reqister():
             parameters['message'] = "Пароли не совпадают"
             return render_template('register.html', **parameters)
         db_sess = db_session.create_session()
-        if db_sess.query(User).filter(User.email == form.email.data | User.phone == form.phone.data).first():
+        if db_sess.query(User).filter((User.email == form.email.data) | (User.phone == form.phone.data)).first():
             parameters['form'] = form
             parameters['message'] = "Такой пользователь уже есть"
             return render_template('register.html', **parameters)
