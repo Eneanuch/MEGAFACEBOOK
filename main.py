@@ -15,6 +15,9 @@ from data.friends import Friends
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
 
+sidebar_elements = list()
+parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
@@ -23,9 +26,11 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-sidebar_elements = list()
 
-parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
+def main():
+    load_sidebar_elem()
+    global_init("data/db/main.db")
+    app.run(port=8080, host='127.0.1.1')
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -184,10 +189,11 @@ def my_profile():
 def add_friend(id):
     from_user_id = current_user.id
     to_user_id = id
+    db_sess = db_session.create_session()
+    parameters['user'] = db_sess.query(User).filter(User.id == to_user_id).first()
     # проверка на себя же :)
     if from_user_id != to_user_id:
 
-        db_sess = db_session.create_session()
         same_friends = db_sess.query(Friends).filter(Friends.from_user == from_user_id,
                                                      Friends.to_user == to_user_id).first()
         if same_friends:
@@ -241,12 +247,6 @@ def load_sidebar_elem():
     with open("data/sidebar.json", "rt", encoding="utf8") as f:
         sidebar_elements = loads(f.read())
         parameters['sidebar'] = sidebar_elements
-
-
-def main():
-    global_init("data/db/main.db")
-    load_sidebar_elem()
-    app.run(port=8080, host='127.0.1.1')
 
 
 if __name__ == '__main__':
