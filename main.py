@@ -96,6 +96,7 @@ def main_page():
     return render_template("main_page.html", **parameters)
 
 
+@app.errorhandler(500)
 @app.errorhandler(400)
 @app.errorhandler(404)
 def handle_bad_request(e):
@@ -120,13 +121,6 @@ def help_page():
     parameters['title'] = "MEGAFACEBOOK: Помощь"
     return render_template("help.html", **parameters)
 
-
-def load_sidebar_elem():
-    global sidebar_elements
-    with open("data/sidebar.json", "rt", encoding="utf8") as f:
-        sidebar_elements = loads(f.read())
-        parameters['sidebar'] = sidebar_elements
-        
 
 @app.route('/posts', methods=['GET', 'POST'])
 @login_required
@@ -181,6 +175,19 @@ def news_delete(id):
     else:
         abort(404)
     return redirect('/')
+
+
+@app.route("/my_profile")
+@login_required
+def my_profile():
+    return redirect(f'/profiles/{current_user.id}')
+
+
+def load_sidebar_elem():
+    global sidebar_elements
+    with open("data/sidebar.json", "rt", encoding="utf8") as f:
+        sidebar_elements = loads(f.read())
+        parameters['sidebar'] = sidebar_elements
 
 
 def main():

@@ -32,15 +32,21 @@
             <a href="/">
                 <img src="{{ url_for('static', filename='img/logo-min.png') }}" class="text-start wh-130 inl-block">
                 <span class="md-24 inl-block">MEGAFACEBOOK</span>
-
             </a>
             <div class="header-end">
-                <a class="btn transparently trans" href="/login">
-                    Войти
-                </a>
-                <a class="btn transparently trans" href="/register">
-                    Зарегистрироваться
-                </a>
+                {% if current_user.is_authenticated %}
+                    <a href="/profiles/{{ current_user.id }}">{{ current_user.name }} {{ current_user.surname }}</a>
+                    <a class="btn transparently trans" href="/logout">
+                        Выйти
+                    </a>
+                {% else %}
+                    <a class="btn transparently trans" href="/login">
+                        Войти
+                    </a>
+                    <a class="btn transparently trans" href="/register">
+                        Зарегистрироваться
+                    </a>
+                {% endif %}
             </div>
         </div>
     </header>
