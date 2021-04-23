@@ -35,6 +35,7 @@ def main():
 
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
+    parameters['message'] = ""
     parameters['title'] = "MEGAFACEBOOK: Регистрация"
     form = RegisterForm()
     if form.validate_on_submit():
@@ -71,6 +72,7 @@ def load_user(user_id):
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    parameters['message'] = ""
     parameters['title'] = "MEGAFACEBOOK: Авторизация"
     form = LoginForm()
     if form.validate_on_submit():
@@ -97,18 +99,21 @@ def logout():
 @app.route("/")
 @app.route("/main")
 def main_page():
+    parameters['message'] = ""
     parameters['title'] = f"MEGAFACEBOOK: Главная"
     return render_template("main_page.html", **parameters)
 
 
 @app.route('/about')
 def about():
+    parameters['message'] = ""
     parameters['title'] = "MEGAFACEBOOK: О нас"
     return render_template("information.html", **parameters)
 
 
 @app.route('/help')
 def help_page():
+    parameters['message'] = ""
     parameters['title'] = "MEGAFACEBOOK: Помощь"
     return render_template("help.html", **parameters)
 
@@ -116,6 +121,7 @@ def help_page():
 @app.route('/posts', methods=['GET', 'POST'])
 @login_required
 def add_news():
+    parameters['message'] = ""
     form = PostForm()
     if form.validate_on_submit():
         db_sess = db_session.create_session()
@@ -133,6 +139,7 @@ def add_news():
 @app.route('/posts/<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_news(id):
+    parameters['message'] = ""
     form = PostForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
@@ -158,6 +165,7 @@ def edit_news(id):
 @app.route('/posts_delete/<int:id>', methods=['GET', 'POST'])
 @login_required
 def news_delete(id):
+    parameters['message'] = ""
     db_sess = db_session.create_session()
     post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
     if post:
@@ -171,6 +179,7 @@ def news_delete(id):
 @app.route('/profiles/id<int:id>')
 @login_required
 def profile(id):
+    parameters['message'] = ""
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id).first()
     parameters['title'] = f"MEGAFACEBOOK: {user.name} {user.surname}"
@@ -181,12 +190,25 @@ def profile(id):
 @app.route("/my_profile")
 @login_required
 def my_profile():
+    parameters['message'] = ""
     return redirect(f'/profiles/id{current_user.id}')
+
+
+@app.route("/friends")
+@login_required
+def friends():
+    parameters['message'] = ""
+    db_sess = db_session.create_session()
+    friends_list = db_sess.query(Friends).filter(
+        (Friends.to_user == current_user.id) | (Friends.from_user == current_user.id))
+
+    return render_template("friends.html", **parameters)
 
 
 @app.route("/add_friend/id<int:id>")
 @login_required
 def add_friend(id):
+    parameters['message'] = ""
     from_user_id = current_user.id
     to_user_id = id
     db_sess = db_session.create_session()
@@ -220,9 +242,21 @@ def add_friend(id):
         return render_template("profile_page.html", **parameters)
 
 
+@app.route("/delete_friend/id<int:id>")
+@login_required
+def delete_friend(id):
+    parameters['message'] = ""
+    db_sess = db_session.create_session()
+    friend = db_sess.query(Friends).filter((Friends.from_user == id) | (Friends.to_user == id)).first()
+    if friend:
+        db_sess.delete(friend)
+    return redirect("/friends")
+
+
 @app.route("/requests")
 @login_required
 def friend_requests():
+    parameters['message'] = ""
     db_sess = db_session.create_session()
     parameters['requests_to'] = db_sess.query(Friends).filter(
         Friends.from_user == current_user.id, not Friends.accepted, not Friends.hided
@@ -237,6 +271,7 @@ def friend_requests():
 @app.errorhandler(400)
 @app.errorhandler(404)
 def handle_bad_request(e):
+    parameters['message'] = ""
     parameters['title'] = f"MEGAFACEBOOK: Error {e.name}"
     parameters['error'] = e.name
     return render_template("error.html", **parameters)
@@ -244,6 +279,7 @@ def handle_bad_request(e):
 
 @app.errorhandler(401)
 def unauthorized(e):
+    parameters['message'] = ""
     parameters['title'] = f"MEGAFACEBOOK: Unauthorized"
     parameters['error'] = e.name
     return render_template("unauthorized.html", **parameters)
