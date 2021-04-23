@@ -101,7 +101,15 @@ def main_page():
 @app.errorhandler(404)
 def handle_bad_request(e):
     parameters['title'] = f"MEGAFACEBOOK: Error {e.name}"
-    return render_template("error.html", error=e.name, **parameters)
+    parameters['error'] = e.name
+    return render_template("error.html", **parameters)
+
+
+@app.errorhandler(401)
+def unauthorized(e):
+    parameters['title'] = f"MEGAFACEBOOK: Unauthorized"
+    parameters['error'] = e.name
+    return render_template("unauthorized.html", **parameters)
 
 
 @app.route('/favicon.ico')

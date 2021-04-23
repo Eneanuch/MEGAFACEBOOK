@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="text-align: center">
+    <span class="material-icons-outlined md-148">report_gmailerrorred</span><br>
+    <a>Вы не авторизованы, пройдите авторизацию.</a><br>
+    <a class="btn btn-primary trans" href="/login">
+        Войти
+    </a>
+    <br><br>
+    <a>Ошибка: {{ error }}.</a>
+</div>
+{% endblock %}
