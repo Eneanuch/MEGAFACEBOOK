@@ -220,6 +220,19 @@ def add_friend(id):
         return render_template("profile_page.html", **parameters)
 
 
+@app.route("/requests")
+@login_required
+def friend_requests():
+    db_sess = db_session.create_session()
+    parameters['requests_to'] = db_sess.query(Friends).filter(
+        Friends.from_user == current_user.id, not Friends.accepted, not Friends.hided
+    )
+    parameters['request_from'] = db_sess.query(Friends).filter(
+        Friends.to_user == current_user.id, not Friends.accepted, not Friends.hided
+    )
+    return render_template("requests.html", **parameters)
+
+
 @app.errorhandler(500)
 @app.errorhandler(400)
 @app.errorhandler(404)

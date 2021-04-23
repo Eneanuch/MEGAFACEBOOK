@@ -7,6 +7,9 @@
         <h1>{{ user.name }} {{user.surname }}</h1>
         <br>
         <h3>Публикации пользователя</h3>
+        {% if current_user.id != user.id %}
+            <a class="btn transparently trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
+        {% endif %}
         <a>{{ message }}</a>
     </div>
 

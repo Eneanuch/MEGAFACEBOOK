@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="requests">
+    <h3>Отправленные заявки</h3>
+    <table>
+        <tr>
+            <th>Пользователь</th>
+        </tr>
+        <tr>
+            <td>Админ Админов</td>
+        </tr>
+        {% for user in request_to %}
+        <tr>
+            <td>{{ user.name }} {{ user.surname }} <a class="btn btn-primary trans" href="/delete_friend/id{{ user.id }}">Убрать заявку</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <h3>На рассмотрении</h3>
+    <table>
+        <tr>
+            <th>Пользователь</th>
+        </tr>
+        <tr>
+            <td>Админ Админов <a class="btn transparently trans" href="/add_friend/id1">Добавить в друзья</a></td>
+        </tr>
+        {% for user in request_from %}
+            <tr>
+                <td>{{ user.name }} {{ user.surname }} <a class="btn btn-primary trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
+                    <a class="btn btn-primary trans" href="/delete_friend/id{{ user.id }}">Убрать заявку</a></td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}
