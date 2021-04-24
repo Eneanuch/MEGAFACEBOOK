@@ -200,8 +200,12 @@ def friends():
     parameters['message'] = ""
     db_sess = db_session.create_session()
     friends_list = db_sess.query(Friends).filter(
-        (Friends.to_user == current_user.id) | (Friends.from_user == current_user.id))
-
+        ((Friends.to_user == current_user.id) | (Friends.from_user == current_user.id)) & Friends.accepted)
+    friends_user_list = list()
+    for i in friends_list:
+        friends_user_list.append(db_sess.query(User).filter(
+            (i.to_user if i.to_user != current_user.id else i.from_user) == User.id).first())
+    parameters['friends'] = friends_user_list
     return render_template("friends.html", **parameters)
 
 
@@ -250,6 +254,7 @@ def delete_friend(id):
     friend = db_sess.query(Friends).filter((Friends.from_user == id) | (Friends.to_user == id)).first()
     if friend:
         db_sess.delete(friend)
+    db_sess.commit()
     return redirect("/friends")
 
 
@@ -260,10 +265,12 @@ def friend_requests():
     db_sess = db_session.create_session()
     parameters['requests_to'] = db_sess.query(Friends).filter(
         Friends.from_user == current_user.id, not Friends.accepted, not Friends.hided
-    )
+    ).all()
     parameters['request_from'] = db_sess.query(Friends).filter(
         Friends.to_user == current_user.id, not Friends.accepted, not Friends.hided
-    )
+    ).all()
+    # print(db_sess.query(Friends).all())
+    # print(parameters['request_from'], parameters['requests_to'])
     return render_template("requests.html", **parameters)
 
 

@@ -16,3 +16,6 @@ class Friends(SqlAlchemyBase):
     date = sqlalchemy.Column(sqlalchemy.DateTime,
                              default=datetime.datetime.now)
     user = orm.relation('User')
+
+    def __repr__(self):
+        return f"<Friends> {self.id} {self.from_user} {self.to_user} {self.accepted} {self.hided} {self.date}"

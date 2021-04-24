@@ -2,9 +2,19 @@
 {% block content %}
 
 <div class="friends">
-    {% for friend in friends %}
-        {{ }}
-    {% endfor %}
+    {% if friends %}
+        <table>
+            {% for friend in friends %}
+                <tr>
+                    <th>
+                        <a href="profiles/id{{ friend.id }}">{{ friend.name }} {{friend.surname}}</a> <a href="delete_friend/id{{ friend.id }}" class="btn btn-primary trans">Убрать из друзей</a>
+                    </th>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <h3>У тебя нет друзей :)</h3>
+    {% endif %}
 </div>
 
 {% endblock %}

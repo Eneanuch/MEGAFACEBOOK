@@ -71,15 +71,7 @@
                 </p>
             {% endfor %}
         </p>
-        <p>
-            {{ form.photo.label }}<br>
-            {{ form.photo(class="form-control sized", type="file") }} <br>
-            {% for error in form.photo.errors %}
-        <p class="alert alert-danger" role="alert">
-            {{ error }}
-        </p>
-        {% endfor %}
-        </p>
+
         <p>{{ form.submit(type="submit", class="btn btn-primary trans") }}</p>
         {{message}}
         <div>
