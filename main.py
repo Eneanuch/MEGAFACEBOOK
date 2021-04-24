@@ -1,8 +1,8 @@
 import datetime
-
+from werkzeug.utils import secure_filename
 from data.db_session import global_init
 from managers import FuncManager, DBManager, TranslateManager
-from flask import url_for, Flask, render_template, send_from_directory, redirect, abort, request
+from flask import url_for, Flask, render_template, send_from_directory, redirect, abort, request, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from json import loads
 import os
@@ -23,6 +23,8 @@ app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
     days=365
 )
+app.config['UPLOAD_FOLDER'] = 'static/img/upload'
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -48,12 +50,21 @@ def reqister():
             parameters['form'] = form
             parameters['message'] = "Такой пользователь уже есть"
             return render_template('register.html', **parameters)
+
+        f = form.photo.data
+        filename = secure_filename(f.filename)
+        if not allowed_file(filename):
+            parameters['form'] = form
+            parameters['message'] = "Загрузите корректное изображение"
+            return render_template('register.html', **parameters)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
         user = User(
             name=form.name.data,
             surname=form.surname.data,
+            photo=filename,
             email=form.email.data,
             phone=form.phone.data,
-            birthday=form.birthday.data,
             city=form.city.data
         )
         user.set_password(form.password.data)
@@ -272,6 +283,11 @@ def friend_requests():
     # print(db_sess.query(Friends).all())
     # print(parameters['request_from'], parameters['requests_to'])
     return render_template("requests.html", **parameters)
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
 @app.errorhandler(500)

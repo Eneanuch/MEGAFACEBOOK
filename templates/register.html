@@ -4,7 +4,7 @@
 
     <h1>Регистрация нового пользователя</h1>
 
-    <form action="" method="post" class="form-registration">
+    <form action="" method="post" class="form-registration" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="name-surname">
             <p>
@@ -71,7 +71,15 @@
                 </p>
             {% endfor %}
         </p>
-
+        <p>
+            {{ form.photo.label }}<br>
+            {{ form.photo(class="form-control-file", type="file") }} <br>
+            {% for error in form.photo.errors %}
+                <p class="alert alert-danger" role="alert">
+                    {{ error }}
+                </p>
+            {% endfor %}
+        </p>
         <p>{{ form.submit(type="submit", class="btn btn-primary trans") }}</p>
         {{message}}
         <div>

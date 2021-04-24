@@ -12,10 +12,11 @@ class User(SqlAlchemyBase, UserMixin):
                            primary_key=True, autoincrement=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     surname = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    photo = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     email = sqlalchemy.Column(sqlalchemy.String,
                               index=True, unique=True, nullable=True)
     phone = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
-    birthday = sqlalchemy.Column(sqlalchemy.DateTime)
+    birthday = sqlalchemy.Column(sqlalchemy.DateTime, nullable=True)
     city = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     registration_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                           default=datetime.datetime.now)
