@@ -214,4 +214,27 @@ a {
     border-radius: 10px;
     background-color: #C1C1C1;
 }
+
+.message-form {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.message-form label {
+    float: left;
+}
+
+.message-form div {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.message-form p{
+    margin-left: 10px;
+}
 // TODO: text-block, main-wrap,
