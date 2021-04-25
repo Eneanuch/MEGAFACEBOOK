@@ -123,6 +123,7 @@ def logout():
 
 @app.route("/")
 @app.route("/main")
+@login_required
 def main_page():
     db_sess = db_session.create_session()
     parameters['message'] = ""
@@ -359,6 +360,8 @@ def my_profile():
 @app.route("/friends", methods=['GET', 'POST'])
 @login_required
 def friends():
+    if request.method == 'POST':
+        return redirect(f'/friends/{request.form["finder"]}')
     parameters['title'] = "MEGAFACEBOOK: Друзья"
     parameters['message'] = ""
     form = FriendForm()
@@ -391,6 +394,12 @@ def friends():
         pass
         # А тут?
     return render_template("friends.html", **parameters)
+
+
+@app.route('friends/<str:find>')
+@login_required
+def friends(find):
+    pass
 
 
 @app.route("/add_friend/id<int:id>")
