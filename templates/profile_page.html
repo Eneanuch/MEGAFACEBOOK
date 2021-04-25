@@ -9,8 +9,10 @@
         <br>
     </div>
     {% if current_user.id != user.id %}
+        <a class="btn btn-primary trans" href="/messages/id{{ user.id }}">Написать сообщение</a>
         <a class="btn btn-primary trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
     {% else %}
+        <a class="btn btn-primary trans" href="/posts">Добавить публикацию</a>
         <a class="btn btn-primary trans" href="/profiles_update/id{{ user.id }}">Редактировать профиль</a>
         <a class="btn btn-primary trans" href="/profiles_photo/id{{ user.id }}">Редактировать фото профиля</a>
         <a class="btn btn-primary trans" href="/profiles_password/id{{ user.id }}">Изменить пароль</a>

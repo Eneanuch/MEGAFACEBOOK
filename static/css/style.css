@@ -317,4 +317,10 @@ a {
     border-radius: 2px;
     box-shadow: 0 0 4px rgb(132 132 132 / 50%);
 }
+
+.friends {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
 // TODO: text-block, main-wrap,

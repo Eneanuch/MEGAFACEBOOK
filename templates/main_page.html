@@ -3,6 +3,7 @@
 
     <h3>Публикации пользователей</h3>
     <div class="profile-posts">
+        <a class="btn btn-primary trans" href="/posts">Добавить публикацию</a>
         {% for i in posts %}
         <div class="profile-post">
             <img class="header-avatar" style="float: left" src="{{ url_for('static', filename='img/upload/'+ users_who_post[ loop.index0 ].photo) }}">

@@ -113,6 +113,7 @@ def logout():
 
 @app.route("/")
 @app.route("/main")
+@login_required
 def main_page():
     db_sess = db_session.create_session()
     parameters['message'] = ""
