@@ -279,11 +279,11 @@ def friend_requests():
     parameters['title'] = "MEGAFACEBOOK: Заявки в друзья"
     parameters['message'] = ""
     db_sess = db_session.create_session()
-    request_from = db_sess.query(Friends).filter((
-            Friends.to_user == current_user.id), not Friends.accepted
+    request_from = db_sess.query(Friends).filter(
+        Friends.to_user == current_user.id, Friends.accepted == False
     ).all()
-    request_to = db_sess.query(Friends).filter((
-            Friends.from_user == current_user.id), not Friends.accepted
+    request_to = db_sess.query(Friends).filter(
+        Friends.from_user == current_user.id, Friends.accepted == False
     ).all()
     requests_to_user = list()
     for i in request_to:
@@ -308,9 +308,9 @@ def messages():
     messages = db_sess.query(Messages).filter((Messages.from_user == current_user.id)
                                               | (Messages.to_user == current_user.id))
     new_messages = list()
-    # for i in messages:
-    #   if
-    #   new_messages.append()
+    #for i in messages:
+     #   if
+     #   new_messages.append()
     return render_template('messages.html', **parameters)
 
 
@@ -323,8 +323,7 @@ def messages_with_user(id):
     db_sess = db_session.create_session()
 
     your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == id).all()
-    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id,
-                                                         Messages.to_user == current_user.id).all()
+    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id,                                         Messages.to_user == current_user.id).all()
     if current_user.id == id:
         pen_friend_messages = []
     all_messages = your_messages + pen_friend_messages
@@ -332,6 +331,7 @@ def messages_with_user(id):
     parameters['all_messages'] = all_messages
 
     pen_friend = db_sess.query(User).filter(User.id == id).first()
+
     parameters['pen_friend'] = pen_friend
     parameters['form'] = form
 
