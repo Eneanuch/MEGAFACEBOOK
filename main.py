@@ -273,7 +273,7 @@ def edit_photo(id):
 @login_required
 def edit_password(id):
     parameters['message'] = ""
-    parameters['title'] = 'Изменить аватарку'
+    parameters['title'] = 'Изменить пароль'
     form = PasswordForm()
     parameters['form'] = form
     if request.method == "GET":
@@ -282,14 +282,19 @@ def edit_password(id):
         if not user:
             abort(404)
     if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == id).first()
+        if not user.check_password(form.old.data):
+            parameters['form'] = form
+            parameters['message'] = "Неверный старый пароль"
+            return render_template('profile_password.html', **parameters)
         if form.password.data != form.password_again.data:
             parameters['form'] = form
             parameters['message'] = "Пароли не совпадают"
             return render_template('profile_password.html', **parameters)
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(current_user.id == id).first()
         if user:
             user.set_password(form.password.data)
+            db_sess.commit()
         else:
             abort(404)
         return redirect(f'/profiles/id{current_user.id}')
