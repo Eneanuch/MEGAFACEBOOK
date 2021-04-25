@@ -14,6 +14,7 @@ from data.posts import Posts
 from data.friends import Friends
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
+from forms.message import MessageForm
 
 sidebar_elements = list()
 parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
@@ -279,10 +280,10 @@ def friend_requests():
     parameters['message'] = ""
     db_sess = db_session.create_session()
     request_from = db_sess.query(Friends).filter((
-        Friends.to_user == current_user.id), not Friends.accepted
+            Friends.to_user == current_user.id), not Friends.accepted
     ).all()
     request_to = db_sess.query(Friends).filter((
-        Friends.from_user == current_user.id), not Friends.accepted
+            Friends.from_user == current_user.id), not Friends.accepted
     ).all()
     requests_to_user = list()
     for i in request_to:
@@ -307,28 +308,42 @@ def messages():
     messages = db_sess.query(Messages).filter((Messages.from_user == current_user.id)
                                               | (Messages.to_user == current_user.id))
     new_messages = list()
-    #for i in messages:
-     #   if
-     #   new_messages.append()
+    # for i in messages:
+    #   if
+    #   new_messages.append()
     return render_template('messages.html', **parameters)
 
 
-@app.route('/messages/id<int:id>')
+@app.route('/messages/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def messages_with_user(id):
+    form = MessageForm()
     parameters['message'] = ""
     parameters['title'] = "MEGAFACEBOOK: Переписка"
     db_sess = db_session.create_session()
 
     your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == id).all()
-    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id, Messages.to_user == current_user.id).all()
+    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id,
+                                                         Messages.to_user == current_user.id).all()
+    if current_user.id == id:
+        pen_friend_messages = []
     all_messages = your_messages + pen_friend_messages
     all_messages = sorted(all_messages, key=lambda x: x.date)
     parameters['all_messages'] = all_messages
 
     pen_friend = db_sess.query(User).filter(User.id == id).first()
-
     parameters['pen_friend'] = pen_friend
+    parameters['form'] = form
+
+    if request.method == 'POST':
+        message = Messages(
+            from_user=current_user.id,
+            to_user=id,
+            text=form.message.data
+        )
+        db_sess.add(message)
+        db_sess.commit()
+        return redirect(f'/messages/id{id}')
 
     return render_template('message_page.html', **parameters)
 
