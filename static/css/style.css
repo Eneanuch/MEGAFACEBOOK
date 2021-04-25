@@ -163,6 +163,7 @@ a {
     height: 35px;
     width: auto;
     border-radius: 50px;
+    box-shadow: 0 0 3px rgb(0 0 0 / 50%);
 }
 .profile-avatar {
     margin-bottom: 10px;
@@ -174,6 +175,7 @@ a {
     width: auto;
     display: inline-block;
     border-radius: 50px;
+    box-shadow: 0 0 3px rgb(0 0 0 / 50%);
 }
 
 .message-block {
@@ -194,6 +196,7 @@ a {
     width: auto;
     border-radius: 50px;
     margin: 2px;
+    box-shadow: 0 0 3px rgb(0 0 0 / 50%);
 }
 
 .message-block p {
@@ -229,12 +232,46 @@ a {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    width: 50%;
+    width: 100%;
     margin-left: auto;
     margin-right: auto;
 }
 
 .message-form p{
     margin-left: 10px;
+}
+
+.messages_with_user {
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.messages_with_user .message-text{
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.messages_with_user p {
+    display: inline-block;
+
+}
+.messages_with_user div {
+    display: flex;
+    margin-bottom: 10px;
+}
+.messages_with_user a {
+    margin-top: 5px;
+    margin-left: 20px;
+}
+
+.requests {
+    width: 50%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.requests tr {
+    margin-top: 10px
 }
 // TODO: text-block, main-wrap,
