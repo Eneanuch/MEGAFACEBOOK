@@ -18,6 +18,7 @@ from forms.message import MessageForm
 from forms.profile_update import UpdateForm
 from forms.profile_photo import PhotoForm
 from forms.profile_password import PasswordForm
+from forms.friend import FriendForm
 
 sidebar_elements = list()
 parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
@@ -319,11 +320,13 @@ def my_profile():
     return redirect(f'/profiles/id{current_user.id}')
 
 
-@app.route("/friends")
+@app.route("/friends", methods=['GET', 'POST'])
 @login_required
 def friends():
     parameters['title'] = "MEGAFACEBOOK: Друзья"
     parameters['message'] = ""
+    form = FriendForm()
+    parameters['form'] = form
     db_sess = db_session.create_session()
     friends_list = db_sess.query(Friends).filter(
         ((Friends.to_user == current_user.id) | (Friends.from_user == current_user.id)) & Friends.accepted)
@@ -332,6 +335,25 @@ def friends():
         friends_user_list.append(db_sess.query(User).filter(
             (i.to_user if i.to_user != current_user.id else i.from_user) == User.id).first())
     parameters['friends'] = friends_user_list
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        if ' ' in form.name.data:
+            s_name = form.name.data.split()[0].lower()
+            s_surname = form.name.data.split()[1].lower()
+            result = db_sess.query(User).filter((s_name in User.name.lower() | s_surname in User.surname.lower())
+                                                | (s_surname in User.name.lower() | s_name in User.surname.lower())
+                                                | (User.name.lower() in s_surname | User.surname.lower() in s_name)
+                                                | (User.name.lower() in s_name
+                                                   | User.surname.lower() in s_surname)).all()
+        else:
+            name = form.name.data.lower()
+            result = db_sess.query(User).filter(name in User.name.lower() | name in User.surname.lower()
+                                                | User.name.lower() in name | User.surname.lower() in name).all()
+        parameters['search'] = result
+        # Что дальше?
+    if request.method == "GET":
+        pass
+        # А тут?
     return render_template("friends.html", **parameters)
 
 
