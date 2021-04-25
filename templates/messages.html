@@ -2,8 +2,14 @@
 {% block content %}
 
 <div class="all_messages">
+    <h1>Сообщения</h1>
     {% for i in users %}
-        <a href="messages/id{{ i.id }}">{{i.name}} {{i.surname}}</a><br>
+        <a href="messages/id{{ i.id }}" class="trans">
+            <div class="message-block gray-hover trans">
+                <img class="message-avatar" src="{{ url_for('static', filename='img/upload/'+ i.photo) }}">
+                <p class="messages-name-surname">{{i.name}} {{i.surname}}</p>
+            </div>
+        </a>
     {% endfor %}
 </div>
 
