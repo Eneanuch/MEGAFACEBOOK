@@ -27,7 +27,8 @@ app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
     days=365
 )
-app.config['UPLOAD_FOLDER'] = 'static/img/upload'
+app.config['UPLOAD_FOLDER_PROFILES'] = 'static/img/upload'
+app.config['UPLOAD_FOLDER_POSTS'] = 'static/img/upload/posts'
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -61,7 +62,7 @@ def reqister():
             parameters['form'] = form
             parameters['message'] = "Загрузите корректное изображение"
             return render_template('register.html', **parameters)
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        f.save(os.path.join(app.config['UPLOAD_FOLDER_PROFILES'], filename))
 
         user = User(
             name=form.name.data,
@@ -143,6 +144,16 @@ def add_news():
         post = Posts()
         post.text = form.text.data
         post.author = current_user.id
+
+        f = form.photo.data
+        filename = secure_filename(f.filename)
+        if not allowed_file(filename):
+            parameters['form'] = form
+            parameters['message'] = "Загрузите корректное изображение"
+            return render_template('post.html', **parameters)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER_POSTS'], filename))
+
+        post.photo = filename
         db_sess.add(post)
         db_sess.commit()
         return redirect('/')
@@ -262,7 +273,7 @@ def edit_photo(id):
             parameters['form'] = form
             parameters['message'] = "Загрузите корректное изображение"
             return render_template('register.html', **parameters)
-        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        f.save(os.path.join(app.config['UPLOAD_FOLDER_PROFILES'], filename))
         user.photo = filename
         db_sess.commit()
         return redirect(f'/profiles/id{current_user.id}')
@@ -273,7 +284,7 @@ def edit_photo(id):
 @login_required
 def edit_password(id):
     parameters['message'] = ""
-    parameters['title'] = 'Изменить аватарку'
+    parameters['title'] = 'Изменить пароль'
     form = PasswordForm()
     parameters['form'] = form
     if request.method == "GET":
@@ -282,14 +293,19 @@ def edit_password(id):
         if not user:
             abort(404)
     if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == id).first()
+        if not user.check_password(form.old.data):
+            parameters['form'] = form
+            parameters['message'] = "Неверный старый пароль"
+            return render_template('profile_password.html', **parameters)
         if form.password.data != form.password_again.data:
             parameters['form'] = form
             parameters['message'] = "Пароли не совпадают"
             return render_template('profile_password.html', **parameters)
-        db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(current_user.id == id).first()
         if user:
             user.set_password(form.password.data)
+            db_sess.commit()
         else:
             abort(404)
         return redirect(f'/profiles/id{current_user.id}')
