@@ -1,4 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
+<div class="all_messages">
+    {% for i in users %}
+        <a href="messages/id{{ i.id }}">{{i.name}} {{i.surname}}</a><br>
+    {% endfor %}
+</div>
+
 {% endblock %}

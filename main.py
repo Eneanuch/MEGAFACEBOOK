@@ -305,12 +305,27 @@ def messages():
     parameters['message'] = ""
     parameters['title'] = "MEGAFACEBOOK: Сообщения"
     db_sess = db_session.create_session()
-    messages = db_sess.query(Messages).filter((Messages.from_user == current_user.id)
-                                              | (Messages.to_user == current_user.id))
-    new_messages = list()
-    #for i in messages:
-     #   if
-     #   new_messages.append()
+    messages_list = sorted(db_sess.query(Messages).filter((Messages.from_user == current_user.id)
+                                              | (Messages.to_user == current_user.id)).all(), key=lambda x: x.date)
+    friends_list = sorted(db_sess.query(Friends).filter( ((Friends.from_user == current_user.id)
+                                                          | (Friends.to_user == current_user.id)),
+                                                  Friends.accepted == True).all(), key=lambda x: x.date)
+    friends_from_me = sorted(db_sess.query(Friends).filter(Friends.from_user == current_user.id).all(), key=lambda x: x.date)
+    friends_to_me = sorted(db_sess.query(Friends).filter(Friends.to_user == current_user.id).all(), key=lambda x: x.date)
+    users = [return_not_me(i.from_user, i.to_user) for i in messages_list] + \
+            [return_not_me(i.from_user, i.to_user) for i in friends_list] + \
+            [return_not_me(i.from_user, i.to_user) for i in friends_from_me] + \
+            [return_not_me(i.from_user, i.to_user) for i in friends_to_me]
+    users_new = list()
+    for i in users:
+        if i not in users_new:
+            users_new.append(i)
+    users_real = list()
+
+    for i in users_new:
+        users_real.append(db_sess.query(User).filter(User.id == i).first())
+
+    parameters['users'] = users_real
     return render_template('messages.html', **parameters)
 
 
@@ -375,6 +390,10 @@ def unauthorized(e):
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'static/favicon.ico',
                                mimetype='image/vnd.microsoft.icon')
+
+
+def return_not_me(id, id2):
+    return id if current_user.id != id else id2
 
 
 def load_sidebar_elem():
