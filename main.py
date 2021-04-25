@@ -13,6 +13,7 @@ from data.posts import Posts
 from data.friends import Friends
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
+from forms.posts_update import PostUpdateForm
 from forms.message import MessageForm
 from forms.profile_update import UpdateForm
 from forms.profile_photo import PhotoForm
@@ -40,6 +41,7 @@ def main():
     app.run(port=8080, host='127.0.1.1')
 
 
+#  Регистрация нового пользователя
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     parameters['message'] = ""
@@ -55,9 +57,15 @@ def reqister():
             parameters['form'] = form
             parameters['message'] = "Такой пользователь уже есть"
             return render_template('register.html', **parameters)
-
+        # Добавление фотографии (сохраняется на сервере)
         f = form.photo.data
         filename = secure_filename(f.filename)
+        db_sess = db_session.create_session()
+        # В папке не должно быть файлов с одинаковыми названиями
+        if db_sess.query(User).filter(User.photo == filename).first():
+            parameters['form'] = form
+            parameters['message'] = "Недопустимое имя файла. Переименуйте"
+            return render_template('register.html', **parameters)
         if not allowed_file(filename):
             parameters['form'] = form
             parameters['message'] = "Загрузите корректное изображение"
@@ -86,6 +94,7 @@ def load_user(user_id):
     return db_sess.query(User).get(user_id)
 
 
+# Авторизация
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     parameters['message'] = ""
@@ -118,7 +127,8 @@ def main_page():
     db_sess = db_session.create_session()
     parameters['message'] = ""
     parameters['title'] = f"MEGAFACEBOOK: Главная"
-    parameters['posts'] = sorted(db_sess.query(Posts).all(), key=lambda x: x.date)
+    # Сортировка по дате
+    parameters['posts'] = sorted(db_sess.query(Posts).all(), key=lambda x: x.date, reverse=True)
     users_who_post = list()
     for i in parameters['posts']:
         users_who_post.append(db_sess.query(User).filter(User.id == i.author).first())
@@ -140,6 +150,7 @@ def help_page():
     return render_template("help.html", **parameters)
 
 
+# Создание поста
 @app.route('/posts', methods=['GET', 'POST'])
 @login_required
 def add_news():
@@ -150,9 +161,14 @@ def add_news():
         post = Posts()
         post.text = form.text.data
         post.author = current_user.id
-
+        # Загрузка фотографии
         f = form.photo.data
         filename = secure_filename(f.filename)
+        db_sess = db_session.create_session()
+        if db_sess.query(Posts).filter(Posts.photo == filename).first():
+            parameters['form'] = form
+            parameters['message'] = "Недопустимое имя файла. Переименуйте"
+            return render_template('post.html', **parameters)
         if not allowed_file(filename):
             parameters['form'] = form
             parameters['message'] = "Загрузите корректное изображение"
@@ -168,11 +184,12 @@ def add_news():
     return render_template('post.html', **parameters)
 
 
+# Редактирование поста
 @app.route('/posts/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_news(id):
     parameters['message'] = ""
-    form = PostForm()
+    form = PostUpdateForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
         post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
@@ -191,9 +208,10 @@ def edit_news(id):
             abort(404)
     parameters['title'] = 'Редактировать поста'
     parameters['form'] = form
-    return render_template('post.html', **parameters)
+    return render_template('post_update.html', **parameters)
 
 
+# Удвление поста
 @app.route('/posts_delete/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def news_delete(id):
@@ -208,6 +226,7 @@ def news_delete(id):
     return redirect('/')
 
 
+# Профиль пользователя
 @app.route('/profiles/id<int:id>')
 @login_required
 def profile(id):
@@ -220,6 +239,7 @@ def profile(id):
     return render_template("profile_page.html", **parameters)
 
 
+# Изменение общей информации
 @app.route('/profiles_update/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_profile(id):
@@ -229,7 +249,7 @@ def edit_profile(id):
     parameters['form'] = form
     if request.method == "GET":
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(current_user.id == id).first()
+        user = db_sess.query(User).filter(current_user.id == User.id).first()
         if user:
             form.name.data = user.name
             form.surname.data = user.surname
@@ -240,7 +260,7 @@ def edit_profile(id):
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(current_user.id == id).first()
+        user = db_sess.query(User).filter(current_user.id == User.id).first()
         if db_sess.query(User).filter((User.email == form.email.data) | (User.phone == form.phone.data),
                                       User.id != current_user.id).first():
             parameters['form'] = form
@@ -259,6 +279,7 @@ def edit_profile(id):
     return render_template('profile_update.html', **parameters)
 
 
+# Изменение фотографии
 @app.route('/profiles_photo/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_photo(id):
@@ -268,25 +289,33 @@ def edit_photo(id):
     parameters['form'] = form
     if request.method == "GET":
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(current_user.id == id).first()
+        user = db_sess.query(User).filter(current_user.id == User.id).first()
         if not user:
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(current_user.id == id).first()
+        user = db_sess.query(User).filter(current_user.id == User.id).first()
         f = form.photo.data
         filename = secure_filename(f.filename)
+        db_sess = db_session.create_session()
+        if db_sess.query(User).filter(User.photo == filename).first():
+            parameters['form'] = form
+            parameters['message'] = "Недопустимое имя файла. Переименуйте"
+            return render_template('profile_photo.html', **parameters)
         if not allowed_file(filename):
             parameters['form'] = form
             parameters['message'] = "Загрузите корректное изображение"
-            return render_template('register.html', **parameters)
+            return render_template('profile_photo.html', **parameters)
         f.save(os.path.join(app.config['UPLOAD_FOLDER_PROFILES'], filename))
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == User.id).first()
         user.photo = filename
         db_sess.commit()
         return redirect(f'/profiles/id{current_user.id}')
     return render_template('profile_photo.html', **parameters)
 
 
+# Изменение пароля
 @app.route('/profiles_password/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_password(id):
@@ -296,12 +325,13 @@ def edit_password(id):
     parameters['form'] = form
     if request.method == "GET":
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(current_user.id == id).first()
+        user = db_sess.query(User).filter(current_user.id == User.id).first()
         if not user:
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        user = db_sess.query(User).filter(current_user.id == id).first()
+        user = db_sess.query(User).filter(current_user.id == User.id).first()
+        # Запрашиваем старый пароль
         if not user.check_password(form.old.data):
             parameters['form'] = form
             parameters['message'] = "Неверный старый пароль"
@@ -440,6 +470,7 @@ def friend_requests():
     return render_template("requests.html", **parameters)
 
 
+# Все сообщения
 @app.route('/messages')
 @login_required
 def messages():
@@ -447,12 +478,15 @@ def messages():
     parameters['title'] = "MEGAFACEBOOK: Сообщения"
     db_sess = db_session.create_session()
     messages_list = sorted(db_sess.query(Messages).filter((Messages.from_user == current_user.id)
-                                              | (Messages.to_user == current_user.id)).all(), key=lambda x: x.date)
+                                              | (Messages.to_user == current_user.id)).all(),
+                           key=lambda x: x.date, reverse=True)
     friends_list = sorted(db_sess.query(Friends).filter( ((Friends.from_user == current_user.id)
                                                           | (Friends.to_user == current_user.id)),
-                                                  Friends.accepted == True).all(), key=lambda x: x.date)
-    friends_from_me = sorted(db_sess.query(Friends).filter(Friends.from_user == current_user.id).all(), key=lambda x: x.date)
-    friends_to_me = sorted(db_sess.query(Friends).filter(Friends.to_user == current_user.id).all(), key=lambda x: x.date)
+                                                  Friends.accepted == True).all(), key=lambda x: x.date, reverse=True)
+    friends_from_me = sorted(db_sess.query(Friends).filter(Friends.from_user == current_user.id).all(),
+                             key=lambda x: x.date, reverse=True)
+    friends_to_me = sorted(db_sess.query(Friends).filter(Friends.to_user == current_user.id).all(),
+                           key=lambda x: x.date, reverse=True)
     users = [return_not_me(i.from_user, i.to_user) for i in messages_list] + \
             [return_not_me(i.from_user, i.to_user) for i in friends_list] + \
             [return_not_me(i.from_user, i.to_user) for i in friends_from_me] + \
@@ -470,6 +504,7 @@ def messages():
     return render_template('messages.html', **parameters)
 
 
+# Диалоги
 @app.route('/messages/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def messages_with_user(id):
@@ -479,7 +514,8 @@ def messages_with_user(id):
     db_sess = db_session.create_session()
 
     your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == id).all()
-    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id, Messages.to_user == current_user.id).all()
+    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id,
+                                                         Messages.to_user == current_user.id).all()
     if current_user.id == id:
         pen_friend_messages = []
     all_messages = your_messages + pen_friend_messages
@@ -509,6 +545,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+# Обработка ошибок
 @app.errorhandler(500)
 @app.errorhandler(400)
 @app.errorhandler(404)
