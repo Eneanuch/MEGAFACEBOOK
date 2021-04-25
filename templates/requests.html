@@ -7,12 +7,14 @@
         <tr>
             <th>Пользователь</th>
         </tr>
+
+        {% for user in requests_to %}
         <tr>
-            <td>Админ Админов</td>
-        </tr>
-        {% for user in request_to %}
-        <tr>
-            <td>{{ user.name }} {{ user.surname }} <a class="btn btn-primary trans" href="/delete_friend/id{{ user.id }}">Убрать заявку</a></td>
+            <td>
+                <img class="header-avatar" src="{{ url_for('static', filename='img/upload/'+ user.photo) }}">
+                <a href="profiles/id{{ user.id }}">{{ user.name }} {{ user.surname }}</a>
+                <a class="btn btn-primary trans" href="/delete_friend/id{{ user.id }}">Убрать заявку</a>
+            </td>
         </tr>
         {% endfor %}
     </table>
@@ -21,13 +23,14 @@
         <tr>
             <th>Пользователь</th>
         </tr>
-        <tr>
-            <td>Админ Админов <a class="btn transparently trans" href="/add_friend/id1">Добавить в друзья</a></td>
-        </tr>
-        {% for user in request_from %}
+        {% for user in requests_from %}
             <tr>
-                <td>{{ user.name }} {{ user.surname }} <a class="btn btn-primary trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
-                    <a class="btn btn-primary trans" href="/delete_friend/id{{ user.id }}">Убрать заявку</a></td>
+                <td>
+                    <img class="header-avatar" src="{{ url_for('static', filename='img/upload/'+ user.photo) }}">
+                    <a class="requests-name-surname" href="profiles/id{{ user.id }}">{{ user.name }} {{ user.surname }}</a>
+                    <a class="btn btn-primary trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
+                    <a class="btn btn-primary trans" href="/delete_friend/id{{ user.id }}">Убрать заявку</a>
+                </td>
             </tr>
         {% endfor %}
     </table>

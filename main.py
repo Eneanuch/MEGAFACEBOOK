@@ -208,6 +208,7 @@ def my_profile():
 @app.route("/friends")
 @login_required
 def friends():
+    parameters['title'] = "MEGAFACEBOOK: Друзья"
     parameters['message'] = ""
     db_sess = db_session.create_session()
     friends_list = db_sess.query(Friends).filter(
@@ -223,6 +224,7 @@ def friends():
 @app.route("/add_friend/id<int:id>")
 @login_required
 def add_friend(id):
+    parameters['title'] = "MEGAFACEBOOK: Добавление друга"
     parameters['message'] = ""
     from_user_id = current_user.id
     to_user_id = id
@@ -260,6 +262,7 @@ def add_friend(id):
 @app.route("/delete_friend/id<int:id>")
 @login_required
 def delete_friend(id):
+    parameters['title'] = "MEGAFACEBOOK: Удаление друга"
     parameters['message'] = ""
     db_sess = db_session.create_session()
     friend = db_sess.query(Friends).filter((Friends.from_user == id) | (Friends.to_user == id)).first()
@@ -272,17 +275,56 @@ def delete_friend(id):
 @app.route("/requests")
 @login_required
 def friend_requests():
+    parameters['title'] = "MEGAFACEBOOK: Заявки в друзья"
     parameters['message'] = ""
     db_sess = db_session.create_session()
-    parameters['requests_to'] = db_sess.query(Friends).filter(
-        Friends.from_user == current_user.id, not Friends.accepted, not Friends.hided
+    request_from = db_sess.query(Friends).filter((
+        Friends.to_user == current_user.id), not Friends.accepted
     ).all()
-    parameters['request_from'] = db_sess.query(Friends).filter(
-        Friends.to_user == current_user.id, not Friends.accepted, not Friends.hided
+    request_to = db_sess.query(Friends).filter((
+        Friends.from_user == current_user.id), not Friends.accepted
     ).all()
-    # print(db_sess.query(Friends).all())
-    # print(parameters['request_from'], parameters['requests_to'])
+    requests_to_user = list()
+    for i in request_to:
+        requests_to_user.append(db_sess.query(User).filter(
+            i.to_user == User.id).first())
+    requests_from_user = list()
+    for i in request_from:
+        requests_from_user.append(db_sess.query(User).filter(
+            i.from_user == User.id).first())
+    # print(requests_from_user, requests_to_user)
+    parameters['requests_from'] = requests_from_user
+    parameters['requests_to'] = requests_to_user
     return render_template("requests.html", **parameters)
+
+
+@app.route('/messages')
+@login_required
+def messages():
+    parameters['message'] = ""
+    parameters['title'] = "MEGAFACEBOOK: Сообщения"
+    db_sess = db_session.create_session()
+    messages = db_sess.query(Messages).filter((Messages.from_user == current_user.id)
+                                              | (Messages.to_user == current_user.id))
+    new_messages = list()
+    #for i in messages:
+     #   if
+     #   new_messages.append()
+    return render_template('messages.html', **parameters)
+
+
+@app.route('/messages/id<int:id>')
+@login_required
+def messages_with_user(id):
+    parameters['message'] = ""
+    parameters['title'] = "MEGAFACEBOOK: Переписка"
+    db_sess = db_session.create_session()
+
+    your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == id)
+    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id, Messages.to_user == current_user.id)
+    all_messages = your_messages + pen_friend_messages
+    all_messages = sorted(all_messages, key=lambda x: x.date)
+
 
 
 def allowed_file(filename):

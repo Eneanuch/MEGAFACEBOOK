@@ -156,4 +156,24 @@ a {
 
 }
 
+.header-avatar {
+    max-width: 35px;
+    max-height: 35px;
+    overflow: hidden;
+    height: 35px;
+    width: auto;
+    border-radius: 50px;
+}
+.profile-avatar {
+    margin-bottom: 10px;
+    margin-right: 25px;
+    max-width: 50px;
+    max-height: 50px;
+    overflow: hidden;
+    height: 50px;
+    width: auto;
+    display: inline-block;
+    border-radius: 50px;
+}
+
 // TODO: text-block, main-wrap,

@@ -7,7 +7,9 @@
             {% for friend in friends %}
                 <tr>
                     <th>
-                        <a href="profiles/id{{ friend.id }}">{{ friend.name }} {{friend.surname}}</a> <a href="delete_friend/id{{ friend.id }}" class="btn btn-primary trans">Убрать из друзей</a>
+                        <img class="header-avatar" src="{{ url_for('static', filename='img/upload/'+ friend.photo) }}">
+                        <a href="profiles/id{{ friend.id }}">{{ friend.name }} {{friend.surname}}</a>
+                        <a href="delete_friend/id{{ friend.id }}" class="btn btn-primary trans">Убрать из друзей</a>
                     </th>
                 </tr>
             {% endfor %}

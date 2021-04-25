@@ -4,13 +4,15 @@
 
     <div class="profile-header">
         <!-- img -->
-        <h1>{{ user.name }} {{user.surname }}</h1>
+        <img alt="avatar" class="profile-avatar" src="{{ url_for('static', filename='img/upload/'+ user.photo) }}">
+        <h1 style="display: inline-block">{{ user.name }} {{user.surname }}</h1>
         <br>
-        <h3>Публикации пользователя</h3>
-        {% if current_user.id != user.id %}
-            <a class="btn transparently trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
-        {% endif %}
-        <a>{{ message }}</a>
     </div>
+    {% if current_user.id != user.id %}
+    <a class="btn btn-primary trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
+    {% endif %}
+    <br>
+    <a>{{ message }}</a>
+    <h3>Публикации пользователя</h3>
 
 {% endblock %}
