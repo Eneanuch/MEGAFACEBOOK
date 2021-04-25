@@ -256,6 +256,7 @@ a {
 .messages_with_user .message-text{
     display: inline-block;
     margin-top: 5px;
+    max-width: 50%;
 }
 
 .messages_with_user p {
@@ -265,6 +266,9 @@ a {
 .messages_with_user div {
     display: flex;
     margin-bottom: 10px;
+    word-break: break-all;
+    min-width: 300px;
+    border-bottom: 1px solid #d6d6d6;
 }
 .messages_with_user a {
     margin-top: 5px;
