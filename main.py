@@ -278,11 +278,11 @@ def friend_requests():
     parameters['title'] = "MEGAFACEBOOK: Заявки в друзья"
     parameters['message'] = ""
     db_sess = db_session.create_session()
-    request_from = db_sess.query(Friends).filter((
-        Friends.to_user == current_user.id), not Friends.accepted
+    request_from = db_sess.query(Friends).filter(
+        Friends.to_user == current_user.id, Friends.accepted == False
     ).all()
-    request_to = db_sess.query(Friends).filter((
-        Friends.from_user == current_user.id), not Friends.accepted
+    request_to = db_sess.query(Friends).filter(
+        Friends.from_user == current_user.id, Friends.accepted == False
     ).all()
     requests_to_user = list()
     for i in request_to:
@@ -293,6 +293,8 @@ def friend_requests():
         requests_from_user.append(db_sess.query(User).filter(
             i.from_user == User.id).first())
     # print(requests_from_user, requests_to_user)
+    # print(request_to)
+    # print(request_from)
     parameters['requests_from'] = requests_from_user
     parameters['requests_to'] = requests_to_user
     return render_template("requests.html", **parameters)
