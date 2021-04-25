@@ -326,9 +326,11 @@ def my_profile():
     return redirect(f'/profiles/id{current_user.id}')
 
 
-@app.route("/friends")
+@app.route("/friends", methods=['GET', 'POST'])
 @login_required
 def friends():
+    if request.method == 'POST':
+        return redirect(f'/friends/{request.form["finder"]}')
     parameters['title'] = "MEGAFACEBOOK: Друзья"
     parameters['message'] = ""
     db_sess = db_session.create_session()
@@ -340,6 +342,12 @@ def friends():
             (i.to_user if i.to_user != current_user.id else i.from_user) == User.id).first())
     parameters['friends'] = friends_user_list
     return render_template("friends.html", **parameters)
+
+
+@app.route('friends/<str:find>')
+@login_required
+def friends(find):
+    pass
 
 
 @app.route("/add_friend/id<int:id>")
