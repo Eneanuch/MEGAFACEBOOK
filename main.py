@@ -320,11 +320,17 @@ def messages_with_user(id):
     parameters['title'] = "MEGAFACEBOOK: Переписка"
     db_sess = db_session.create_session()
 
-    your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == id)
-    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id, Messages.to_user == current_user.id)
+    your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == id).all()
+    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id, Messages.to_user == current_user.id).all()
     all_messages = your_messages + pen_friend_messages
     all_messages = sorted(all_messages, key=lambda x: x.date)
+    parameters['all_messages'] = all_messages
 
+    pen_friend = db_sess.query(User).filter(User.id == id).first()
+
+    parameters['pen_friend'] = pen_friend
+
+    return render_template('message_page.html', **parameters)
 
 
 def allowed_file(filename):

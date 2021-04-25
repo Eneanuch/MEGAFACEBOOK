@@ -2,7 +2,25 @@
 
 {% block content %}
 
+<div class="messages_with_user">
 
-
+    {% for i in all_messages %}
+        {% if i.from_user == current_user.id %}
+            Сообщение от {{ current_user.name }} {{ current_user.surname }}: {{ i.text }}<br>
+        {% else %}
+            Сообщение от {{ pen_friend.name }} {{ pen_friend.surname }}: {{ i.text }}<br>
+        {% endif %}
+    {% endfor %}
+    <form action="" method="post">
+        {{ form.message.label }}<br>
+        {{ form.message(class="form-control sized") }}<br>
+        {% for error in form.message.errors %}
+        <p class="alert alert-danger" role="alert">
+            {{ error }}
+        </p>
+        {% endfor %}
+        <p>{{ form.submit(type="submit", class="btn btn-primary trans") }}</p>
+    </form>
+</div>
 
 {% endblock %}
