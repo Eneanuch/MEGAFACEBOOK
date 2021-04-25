@@ -1,7 +1,6 @@
 import datetime
 from werkzeug.utils import secure_filename
 from data.db_session import global_init
-from managers import FuncManager, DBManager, TranslateManager
 from flask import url_for, Flask, render_template, send_from_directory, redirect, abort, request, session
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from json import loads
@@ -115,8 +114,14 @@ def logout():
 @app.route("/")
 @app.route("/main")
 def main_page():
+    db_sess = db_session.create_session()
     parameters['message'] = ""
     parameters['title'] = f"MEGAFACEBOOK: Главная"
+    parameters['posts'] = sorted(db_sess.query(Posts).all(), key=lambda x: x.date)
+    users_who_post = list()
+    for i in parameters['posts']:
+        users_who_post.append(db_sess.query(User).filter(User.id == i.author).first())
+    parameters['users_who_post'] = users_who_post
     return render_template("main_page.html", **parameters)
 
 
@@ -210,6 +215,7 @@ def profile(id):
     user = db_sess.query(User).filter(User.id == id).first()
     parameters['title'] = f"MEGAFACEBOOK: {user.name} {user.surname}"
     parameters['user'] = user
+    parameters['posts'] = db_sess.query(Posts).filter(Posts.author == id).all()
     return render_template("profile_page.html", **parameters)
 
 

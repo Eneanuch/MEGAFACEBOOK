@@ -157,12 +157,11 @@ a {
 }
 
 .header-avatar {
-    max-width: 35px;
-    max-height: 35px;
-    max-height: 35px;
-    min-width: 35px;
+    max-width: 45px;
+    max-height: 45px;
+    min-width: 45px;
     overflow: hidden;
-    height: 35px;
+    height: 45px;
     width: auto;
     border-radius: 50px;
     box-shadow: 0 0 3px rgb(0 0 0 / 50%);
@@ -287,5 +286,35 @@ a {
 
 .big {
     height: 100px;
+}
+
+.profile-posts {
+    margin-top: 30px;
+    margin-bottom: 100px;
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.profile-post {
+    margin-top: 30px;
+}
+
+.post-author {
+    float: left;
+    margin-left: 10px;
+    margin-top: 5px;
+    font-size: 20px;
+}
+
+.post-text {
+    margin-top: 30px;
+    font-size: 18px;
+}
+.post-image {
+    max-width: 800px;
+    max-height: 600px;
+    border-radius: 2px;
+    box-shadow: 0 0 4px rgb(132 132 132 / 50%);
 }
 // TODO: text-block, main-wrap,

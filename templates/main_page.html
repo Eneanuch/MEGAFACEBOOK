@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="posts-block">
-    <div class="post-block">
-        <h1></h1>
-        <img src="123">
+    <h3>Публикации пользователей</h3>
+    <div class="profile-posts">
+        {% for i in posts %}
+        <div class="profile-post">
+            <img class="header-avatar" style="float: left" src="{{ url_for('static', filename='img/upload/'+ users_who_post[ loop.index0 ].photo) }}">
+            <a href="/profiles/id{{ users_who_post[ loop.index0 ].id }}" class="post-author">{{ users_who_post[loop.index0].name }} {{ users_who_post[loop.index0].surname }}</a>
+            <br>
+            <p class="post-text">{{ i.text }}</p>
+            <img class="post-image" src="{{ url_for('static', filename='img/upload/posts/'+ i.photo) }}">
+            {% if users_who_post[ loop.index0 ].id == current_user.id %}
+                <div style="float: right; margin-top: 10px">
+                    <a class="btn btn-warning trans" href="/posts/id{{ i.id }}">Редактировать</a>
+                    <a class="btn btn-danger trans" href="/posts_delete/id{{ i.id }}">Удалить</a>
+                </div>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
-</div>
 
 {% endblock %}
