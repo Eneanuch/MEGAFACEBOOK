@@ -15,6 +15,9 @@ from data.friends import Friends
 from forms.user import RegisterForm, LoginForm
 from forms.post import PostForm
 from forms.message import MessageForm
+from forms.profile_update import UpdateForm
+from forms.profile_photo import PhotoForm
+from forms.profile_password import PasswordForm
 
 sidebar_elements = list()
 parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
@@ -199,6 +202,100 @@ def profile(id):
     return render_template("profile_page.html", **parameters)
 
 
+@app.route('/profiles_update/id<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_profile(id):
+    parameters['message'] = ""
+    parameters['title'] = 'Редактировать профиля'
+    form = UpdateForm()
+    parameters['form'] = form
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == id).first()
+        if user:
+            form.name.data = user.name
+            form.surname.data = user.surname
+            form.email.data = user.email
+            form.phone.data = user.phone
+            form.city.data = user.city
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == id).first()
+        if db_sess.query(User).filter((User.email == form.email.data) | (User.phone == form.phone.data),
+                                      User.id != current_user.id).first():
+            parameters['form'] = form
+            parameters['message'] = "Такой пользователь уже есть"
+            return render_template('profile_update.html', **parameters)
+        if user:
+            user.name = form.name.data
+            user.surname = form.surname.data
+            user.email = form.email.data
+            user.phone = form.phone.data
+            user.city = form.city.data
+            db_sess.commit()
+            return redirect(f'/profiles/id{current_user.id}')
+        else:
+            abort(404)
+    return render_template('profile_update.html', **parameters)
+
+
+@app.route('/profiles_photo/id<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_photo(id):
+    parameters['message'] = ""
+    parameters['title'] = 'Изменить аватарку'
+    form = PhotoForm()
+    parameters['form'] = form
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == id).first()
+        if not user:
+            abort(404)
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == id).first()
+        f = form.photo.data
+        filename = secure_filename(f.filename)
+        if not allowed_file(filename):
+            parameters['form'] = form
+            parameters['message'] = "Загрузите корректное изображение"
+            return render_template('register.html', **parameters)
+        f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        user.photo = filename
+        db_sess.commit()
+        return redirect(f'/profiles/id{current_user.id}')
+    return render_template('profile_photo.html', **parameters)
+
+
+@app.route('/profiles_password/id<int:id>', methods=['GET', 'POST'])
+@login_required
+def edit_password(id):
+    parameters['message'] = ""
+    parameters['title'] = 'Изменить аватарку'
+    form = PasswordForm()
+    parameters['form'] = form
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == id).first()
+        if not user:
+            abort(404)
+    if form.validate_on_submit():
+        if form.password.data != form.password_again.data:
+            parameters['form'] = form
+            parameters['message'] = "Пароли не совпадают"
+            return render_template('profile_password.html', **parameters)
+        db_sess = db_session.create_session()
+        user = db_sess.query(User).filter(current_user.id == id).first()
+        if user:
+            user.set_password(form.password.data)
+        else:
+            abort(404)
+        return redirect(f'/profiles/id{current_user.id}')
+    return render_template('profile_password.html', **parameters)
+
+
 @app.route("/my_profile")
 @login_required
 def my_profile():
@@ -338,7 +435,7 @@ def messages_with_user(id):
     db_sess = db_session.create_session()
 
     your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == id).all()
-    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id,                                         Messages.to_user == current_user.id).all()
+    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id, Messages.to_user == current_user.id).all()
     if current_user.id == id:
         pen_friend_messages = []
     all_messages = your_messages + pen_friend_messages
