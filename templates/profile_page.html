@@ -18,5 +18,22 @@
     <br>
     <a>{{ message }}</a>
     <h3>Публикации пользователя</h3>
+    <div class="profile-posts">
+        {% for i in posts %}
+            <div class="profile-post">
+                <img class="header-avatar" style="float: left" src="{{ url_for('static', filename='img/upload/'+ user.photo) }}">
+                <a href="/profiles/id{{ user.id }}" class="post-author">{{ user.name }} {{ user.surname }}</a>
+                <br>
+                <p class="post-text">{{ i.text }}</p>
+                <img class="post-image" src="{{ url_for('static', filename='img/upload/posts/'+ i.photo) }}">
+                {% if user.id == current_user.id %}
+                    <div style="float: right; margin-top: 10px">
+                        <a class="btn btn-warning trans" href="/posts/id{{ i.id }}">Редактировать</a>
+                        <a class="btn btn-danger trans" href="/posts_delete/id{{ i.id }}">Удалить</a>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
 
 {% endblock %}
