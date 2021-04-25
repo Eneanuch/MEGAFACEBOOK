@@ -162,7 +162,7 @@ def add_news():
     return render_template('post.html', **parameters)
 
 
-@app.route('/posts/<int:id>', methods=['GET', 'POST'])
+@app.route('/posts/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def edit_news(id):
     parameters['message'] = ""
@@ -188,7 +188,7 @@ def edit_news(id):
     return render_template('post.html', **parameters)
 
 
-@app.route('/posts_delete/<int:id>', methods=['GET', 'POST'])
+@app.route('/posts_delete/id<int:id>', methods=['GET', 'POST'])
 @login_required
 def news_delete(id):
     parameters['message'] = ""

@@ -284,4 +284,8 @@ a {
 .requests tr {
     margin-top: 10px
 }
+
+.big {
+    height: 100px;
+}
 // TODO: text-block, main-wrap,
