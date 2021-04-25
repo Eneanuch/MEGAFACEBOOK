@@ -312,8 +312,8 @@ a {
     font-size: 18px;
 }
 .post-image {
-    max-width: 800px;
-    max-height: 600px;
+    max-width: 100%;
+    max-height: 40%;
     border-radius: 2px;
     box-shadow: 0 0 4px rgb(132 132 132 / 50%);
 }
