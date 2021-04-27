@@ -413,11 +413,9 @@ def friends():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         name = form.name.data
-        surname = form.surname.data
-        city = form.city.date
         result = db_sess.query(User).filter(User.name.like(f"%{name}%")
-                                            | User.surname.like(f"%{surname}%")
-                                            | User.city.like(f"%{city}%"), User.id != current_user.id).all()
+                                            | User.surname.like(f"%{name}%")
+                                            | User.city.like(f"%{name}%"), User.id != current_user.id).all()
         parameters['friends_find'] = result
         return render_template("friends.html", **parameters)
     return render_template("friends.html", **parameters)
