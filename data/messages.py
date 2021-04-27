@@ -15,4 +15,3 @@ class Messages(SqlAlchemyBase):
     date = sqlalchemy.Column(sqlalchemy.DateTime,
                              default=datetime.datetime.now)
     read = sqlalchemy.Column(sqlalchemy.Integer, nullable=True)
-    user = orm.relation('User')

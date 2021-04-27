@@ -2,10 +2,10 @@ import datetime
 from werkzeug.utils import secure_filename
 from data.db_session import global_init
 from flask import url_for, Flask, render_template, send_from_directory, redirect, abort, request, session
+from flask_ngrok import run_with_ngrok
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from json import loads
 import os
-
 from data import db_session
 from data.users import User
 from data.messages import Messages
@@ -30,6 +30,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
 )
 app.config['UPLOAD_FOLDER_PROFILES'] = 'static/img/upload'
 app.config['UPLOAD_FOLDER_POSTS'] = 'static/img/upload/posts'
+# run_with_ngrok(app)
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -38,7 +39,7 @@ login_manager.init_app(app)
 def main():
     load_sidebar_elem()
     global_init("data/db/main.db")
-    app.run(port=8080, host='127.0.1.1')
+    app.run()
 
 
 #  Регистрация нового пользователя
@@ -130,10 +131,7 @@ def main_page():
     parameters['title'] = f"MEGAFACEBOOK: Главная"
     # Сортировка по дате
     parameters['posts'] = sorted(db_sess.query(Posts).all(), key=lambda x: x.date, reverse=True)
-    users_who_post = list()
-    for i in parameters['posts']:
-        users_who_post.append(db_sess.query(User).filter(User.id == i.author).first())
-    parameters['users_who_post'] = users_who_post
+
     return render_template("main_page.html", **parameters)
 
 
@@ -360,46 +358,26 @@ def my_profile():
 @app.route("/friends", methods=['GET', 'POST'])
 @login_required
 def friends():
-    if request.method == 'POST':
-        return redirect(f'/friends/{request.form["finder"]}')
     parameters['title'] = "MEGAFACEBOOK: Друзья"
     parameters['message'] = ""
     form = FriendForm()
     parameters['form'] = form
-    db_sess = db_session.create_session()
-    friends_list = db_sess.query(Friends).filter(
-        ((Friends.to_user == current_user.id) | (Friends.from_user == current_user.id)) & Friends.accepted)
-    friends_user_list = list()
-    for i in friends_list:
-        friends_user_list.append(db_sess.query(User).filter(
-            (i.to_user if i.to_user != current_user.id else i.from_user) == User.id).first())
-    parameters['friends'] = friends_user_list
+    if request.method == "GET":
+        db_sess = db_session.create_session()
+        friends_list = db_sess.query(Friends).filter(
+            ((Friends.to_user == current_user.id) | (Friends.from_user == current_user.id)) & Friends.accepted)
+        friends_user_list = list()
+        for i in friends_list:
+            friends_user_list.append(db_sess.query(User).filter(
+                (i.to_user if i.to_user != current_user.id else i.from_user) == User.id).first())
+        parameters['friends'] = friends_user_list
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        if ' ' in form.name.data:
-            s_name = form.name.data.split()[0].lower()
-            s_surname = form.name.data.split()[1].lower()
-            result = db_sess.query(User).filter((s_name in User.name.lower() | s_surname in User.surname.lower())
-                                                | (s_surname in User.name.lower() | s_name in User.surname.lower())
-                                                | (User.name.lower() in s_surname | User.surname.lower() in s_name)
-                                                | (User.name.lower() in s_name
-                                                   | User.surname.lower() in s_surname)).all()
-        else:
-            name = form.name.data.lower()
-            result = db_sess.query(User).filter(name in User.name.lower() | name in User.surname.lower()
-                                                | User.name.lower() in name | User.surname.lower() in name).all()
-        parameters['search'] = result
-        # Что дальше?
-    if request.method == "GET":
-        pass
-        # А тут?
+        name = form.name.data
+        result = db_sess.query(User).filter(User.name.like(f"%{name}%"), User.id != current_user.id).all()
+        parameters['friends'] = result
+        return render_template("friends.html", **parameters)
     return render_template("friends.html", **parameters)
-
-
-@app.route('friends/<str:find>')
-@login_required
-def friends(find):
-    pass
 
 
 @app.route("/add_friend/id<int:id>")

@@ -29,7 +29,7 @@
                 <p class="post-text">{{ i.text }}</p>
                 <img class="post-image" src="{{ url_for('static', filename='img/upload/posts/'+ i.photo) }}">
                 {% if user.id == current_user.id %}
-                    <div style="float: right; margin-top: 10px">
+                    <div style="float: right; margin-top: 10px; width: 100%;">
                         <a class="btn btn-warning trans" href="/posts/id{{ i.id }}">Редактировать</a>
                         <a class="btn btn-danger trans" href="/posts_delete/id{{ i.id }}">Удалить</a>
                     </div>
