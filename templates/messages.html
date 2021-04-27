@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="all_messages">
+<div id="messages-all" class="all_messages">
     <h1>Сообщения</h1>
     {% for i in users %}
-        <a href="messages/id{{ i.id }}" class="trans">
+        <a id="content" href="messages/id{{ i.id }}" class="trans">
             <div class="message-block gray-hover trans">
                 <img class="message-avatar" src="{{ url_for('static', filename='img/upload/'+ i.photo) }}">
                 <p class="messages-name-surname">{{i.name}} {{i.surname}}</p>
@@ -12,4 +12,10 @@
         </a>
     {% endfor %}
 </div>
+
+<script>
+setInterval(function(){
+    $("#messages-all").load("/messages #content")
+},1000)
+</script>
 {% endblock %}

@@ -3,9 +3,11 @@
 
 <div class="requests">
     <h3>Отправленные заявки</h3>
+    <div id="all-requests-to">
         {% if requests_to %}
+
             {% for friend in requests_to %}
-                <div class="gray-hover trans" style="margin-top: 10px">
+                <div id="content-1" class="gray-hover trans" style="margin-top: 10px">
                     <img class="header-avatar" style="margin-right: 10px" src="{{ url_for('static', filename='img/upload/'+ friend.photo) }}">
                     <a style="margin-right: 10px" href="/profiles/id{{ friend.id }}">{{ friend.name }} {{ friend.surname }}</a>
                     <a href="/messages/id{{ friend.id }}" class="btn btn-primary trans" style="margin-right: 20px"> Написать сообщение</a>
@@ -13,13 +15,17 @@
                     <br>
                 </div>
             {% endfor %}
+
         {% else %}
             <h4>Нет заявок...</h4>
         {% endif %}
+        </div>
     <h3>На рассмотрении</h3>
+    <div id="all-requests-from">
         {% if requests_from %}
+
             {% for friend in requests_from %}
-            <div class="gray-hover trans" style="margin-top: 10px">
+            <div id="content-2" class="gray-hover trans" style="margin-top: 10px">
                 <img class="header-avatar" style="margin-right: 10px" src="{{ url_for('static', filename='img/upload/'+ friend.photo) }}">
                 <a style="margin-right: 10px" href="/profiles/id{{ friend.id }}">{{ friend.name }} {{ friend.surname }}</a>
                 <a href="/messages/id{{ friend.id }}" class="btn btn-primary trans" style="margin-right: 20px"> Написать сообщение</a>
@@ -27,9 +33,20 @@
                 <br>
             </div>
             {% endfor %}
+
         {% else %}
             <h4>Нет заявок...</h4>
         {% endif %}
+        </div>
 </div>
-
+<script>
+setInterval(function(){
+    $("#all-requests-from").load("/requests #content-2")
+},1000)
+</script>
+<script>
+setInterval(function(){
+    $("#all-requests-to").load("/requests #content-1")
+},1000)
+</script>
 {% endblock %}
