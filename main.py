@@ -142,13 +142,6 @@ def about():
     return render_template("information.html", **parameters)
 
 
-@app.route('/help')
-def help_page():
-    parameters['message'] = ""
-    parameters['title'] = "MEGAFACEBOOK: Помощь"
-    return render_template("help.html", **parameters)
-
-
 # Создание поста
 @app.route('/posts', methods=['GET', 'POST'])
 @login_required
@@ -231,9 +224,12 @@ def news_delete(id):
 def profile(id):
     parameters['message'] = ""
     db_sess = db_session.create_session()
-    user = db_sess.query(User).filter(User.id == id).first()
-    parameters['title'] = f"MEGAFACEBOOK: {user.name} {user.surname}"
-    parameters['user'] = user
+    user1 = db_sess.query(User).filter(User.id == id).first()
+    parameters['title'] = f"MEGAFACEBOOK: {user1.name} {user1.surname}"
+    parameters['user'] = user1
+    parameters['count_of_friends'] = len(list(db_sess.query(Friends).filter(
+        (Friends.from_user == user1.id) | (Friends.to_user == user1.id),
+        Friends.accepted == 1).all()))
     parameters['posts'] = db_sess.query(Posts).filter(Posts.author == id).all()
     return render_template("profile_page.html", **parameters)
 
@@ -362,6 +358,7 @@ def friends():
     parameters['message'] = ""
     form = FriendForm()
     parameters['form'] = form
+    parameters['friends'] = list()
     if request.method == "GET":
         db_sess = db_session.create_session()
         friends_list = db_sess.query(Friends).filter(
@@ -375,7 +372,7 @@ def friends():
         db_sess = db_session.create_session()
         name = form.name.data
         result = db_sess.query(User).filter(User.name.like(f"%{name}%"), User.id != current_user.id).all()
-        parameters['friends'] = result
+        parameters['friends_find'] = result
         return render_template("friends.html", **parameters)
     return render_template("friends.html", **parameters)
 
@@ -424,7 +421,9 @@ def delete_friend(id):
     parameters['title'] = "MEGAFACEBOOK: Удаление друга"
     parameters['message'] = ""
     db_sess = db_session.create_session()
-    friend = db_sess.query(Friends).filter((Friends.from_user == id) | (Friends.to_user == id)).first()
+    friend = db_sess.query(Friends).filter((Friends.from_user == id) | (Friends.to_user == id),
+                                           (Friends.from_user == current_user.id)
+                                           | (Friends.to_user == current_user.id)).first()
     if friend:
         db_sess.delete(friend)
     db_sess.commit()
@@ -465,11 +464,12 @@ def messages():
     parameters['title'] = "MEGAFACEBOOK: Сообщения"
     db_sess = db_session.create_session()
     messages_list = sorted(db_sess.query(Messages).filter((Messages.from_user == current_user.id)
-                                              | (Messages.to_user == current_user.id)).all(),
+                                                          | (Messages.to_user == current_user.id)).all(),
                            key=lambda x: x.date, reverse=True)
-    friends_list = sorted(db_sess.query(Friends).filter( ((Friends.from_user == current_user.id)
-                                                          | (Friends.to_user == current_user.id)),
-                                                  Friends.accepted == True).all(), key=lambda x: x.date, reverse=True)
+    friends_list = sorted(db_sess.query(Friends).filter(((Friends.from_user == current_user.id)
+                                                         | (Friends.to_user == current_user.id)),
+                                                        Friends.accepted == True).all(), key=lambda x: x.date,
+                          reverse=True)
     friends_from_me = sorted(db_sess.query(Friends).filter(Friends.from_user == current_user.id).all(),
                              key=lambda x: x.date, reverse=True)
     friends_to_me = sorted(db_sess.query(Friends).filter(Friends.to_user == current_user.id).all(),

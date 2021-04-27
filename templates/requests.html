@@ -3,37 +3,33 @@
 
 <div class="requests">
     <h3>Отправленные заявки</h3>
-    <table>
-        <tr>
-            <th>Пользователь</th>
-        </tr>
-
-        {% for user in requests_to %}
-        <tr>
-            <td>
-                <img class="header-avatar" src="{{ url_for('static', filename='img/upload/'+ user.photo) }}">
-                <a href="profiles/id{{ user.id }}">{{ user.name }} {{ user.surname }}</a>
-                <a class="btn btn-primary trans" href="/delete_friend/id{{ user.id }}">Убрать заявку</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+        {% if requests_to %}
+            {% for friend in requests_to %}
+                <div class="gray-hover trans" style="margin-top: 10px">
+                    <img class="header-avatar" style="margin-right: 10px" src="{{ url_for('static', filename='img/upload/'+ friend.photo) }}">
+                    <a style="margin-right: 10px" href="/profiles/id{{ friend.id }}">{{ friend.name }} {{friend.surname}}</a>
+                    <a href="/messages/id{{ friend.id }}" class="btn btn-primary trans" style="margin-right: 20px"> Написать сообщение</a>
+                    <a href="/delete_friend/id{{ friend.id }}" class="btn btn-primary trans" style="margin-right: 20px">Убрать заявку</a>
+                    <br>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h4>Нет заявок...</h4>
+        {% endif %}
     <h3>На рассмотрении</h3>
-    <table>
-        <tr>
-            <th>Пользователь</th>
-        </tr>
-        {% for user in requests_from %}
-            <tr>
-                <td>
-                    <img class="header-avatar" src="{{ url_for('static', filename='img/upload/'+ user.photo) }}">
-                    <a class="requests-name-surname" href="profiles/id{{ user.id }}">{{ user.name }} {{ user.surname }}</a>
-                    <a class="btn btn-primary trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
-                    <a class="btn btn-primary trans" href="/delete_friend/id{{ user.id }}">Убрать заявку</a>
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
+        {% if requests_from %}
+            {% for friend in requests_from %}
+            <div class="gray-hover trans" style="margin-top: 10px">
+                <img class="header-avatar" style="margin-right: 10px" src="{{ url_for('static', filename='img/upload/'+ friend.photo) }}">
+                <a style="margin-right: 10px" href="/profiles/id{{ friend.id }}">{{ friend.name }} {{friend.surname}}</a>
+                <a href="/messages/id{{ friend.id }}" class="btn btn-primary trans" style="margin-right: 20px"> Написать сообщение</a>
+                <a href="/delete_friend/id{{ friend.id }}" class="btn btn-primary trans" style="margin-right: 20px">Убрать заявку</a>
+                <br>
+            </div>
+            {% endfor %}
+        {% else %}
+            <h4>Нет заявок...</h4>
+        {% endif %}
 </div>
 
 {% endblock %}

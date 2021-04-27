@@ -7,6 +7,7 @@
         <img alt="avatar" class="profile-avatar" src="{{ url_for('static', filename='img/upload/'+ user.photo) }}">
         <h1 style="display: inline-block">{{ user.name }} {{user.surname }}</h1>
         <br>
+        <h3>Город: {{ user.city }}. Друзей: {{ count_of_friends}}</h3><br>
     </div>
     {% if current_user.id != user.id %}
         <a class="btn btn-primary trans" href="/messages/id{{ user.id }}">Написать сообщение</a>
