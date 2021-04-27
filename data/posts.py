@@ -1,10 +1,11 @@
 import sqlalchemy
 import datetime
+from sqlalchemy_serializer import SerializerMixin
 from .db_session import SqlAlchemyBase
 from sqlalchemy import orm
 
 
-class Posts(SqlAlchemyBase):
+class Posts(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'posts'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

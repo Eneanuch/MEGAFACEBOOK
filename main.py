@@ -6,7 +6,7 @@ from flask_ngrok import run_with_ngrok
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from json import loads
 import os
-from data import db_session
+from data import db_session, users_api, posts_api
 from data.users import User
 from data.messages import Messages
 from data.posts import Posts
@@ -39,6 +39,7 @@ login_manager.init_app(app)
 def main():
     load_sidebar_elem()
     global_init("data/db/main.db")
+    app.register_blueprint(users_api.blueprint)
     app.run()
 
 

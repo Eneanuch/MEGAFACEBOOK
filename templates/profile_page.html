@@ -13,10 +13,17 @@
         <a class="btn btn-primary trans" href="/messages/id{{ user.id }}">Написать сообщение</a>
         <a class="btn btn-primary trans" href="/add_friend/id{{ user.id }}">Добавить в друзья</a>
     {% else %}
-        <a class="btn btn-primary trans" href="/posts">Добавить публикацию</a>
-        <a class="btn btn-primary trans" href="/profiles_update/id{{ user.id }}">Редактировать профиль</a>
-        <a class="btn btn-primary trans" href="/profiles_photo/id{{ user.id }}">Редактировать фото профиля</a>
-        <a class="btn btn-primary trans" href="/profiles_password/id{{ user.id }}">Изменить пароль</a>
+        <div>
+            <a style="margin-bottom: 10px;" class="btn btn-primary trans" href="/posts">Добавить публикацию</a>
+            <div class="settings-panel-wrap">
+                <a class="btn btn-primary trans" href="#">Открыть настройки</a>
+                <div class="settings-panel" style="margin-top:10px;">
+                    <a class="btn btn-primary trans" href="/profiles_update/id{{ user.id }}">Редактировать профиль</a>
+                    <a class="btn btn-primary trans" href="/profiles_photo/id{{ user.id }}">Редактировать фото профиля</a>
+                    <a class="btn btn-primary trans" href="/profiles_password/id{{ user.id }}">Изменить пароль</a>
+                </div>
+            </div>
+        </div>
     {% endif %}
     <br>
     <a>{{ message }}</a>
@@ -41,5 +48,13 @@
             </div>
         {% endfor %}
     </div>
-
+<script>
+$(document).ready(function(){
+$(".settings-panel-wrap a").click(function(){
+$(".settings-panel").slideToggle('slow');
+$(this).toggleClass("active");
+});
+return false;
+});
+</script>
 {% endblock %}

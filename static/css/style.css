@@ -323,4 +323,8 @@ a {
     margin-left: auto;
     margin-right: auto;
 }
+
+.settings-panel {
+    display:none;
+}
 // TODO: text-block, main-wrap,
