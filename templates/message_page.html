@@ -2,11 +2,12 @@
 
 {% block content %}
 
-<div class="messages_with_user">
+<div id="message-box" class="messages_with_user">
     <h2>Переписка с {{ pen_friend.name }} {{ pen_friend.surname }}</h2>
     <a class="btn btn-primary trans" href="#down">Вниз</a>
+    <div id="content">
     {% for i in all_messages %}
-        <div id="content">
+        <div id="content-mess">
             {% if i.from_user == current_user.id %}
                 <img class="header-avatar" style="margin-bottom: 10px;" src="{{ url_for('static', filename='img/upload/'+ current_user.photo) }}">
                 <a href="/profiles/id{{ current_user.id }}">{{ current_user.name }} {{ current_user.surname }}</a><p class="message-text">: {{ i.text }}</p><br>
@@ -17,6 +18,7 @@
             <a> отправлено в {{ i.date.strftime('%H:%M') }} </a>
         </div>
     {% endfor %}
+    </div>
     <form action="" method="post" class="message-form">
 
         <div>
@@ -32,8 +34,8 @@
 </div>
 
 <script>
-setInterval(function(){ // load the data from your endpoint into the div
-    $("#content").load("/message_page/id{{ pen_friend.id }} #content").
+setInterval(function(){
+    $("#content").load("/messages/id{{ pen_friend.id }} #content-mess")
 },1000)
 </script>
 
