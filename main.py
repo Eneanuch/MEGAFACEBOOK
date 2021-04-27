@@ -3,10 +3,11 @@ from werkzeug.utils import secure_filename
 from data.db_session import global_init
 from flask import url_for, Flask, render_template, send_from_directory, redirect, abort, request, session
 from flask_ngrok import run_with_ngrok
+from flask_restful import reqparse, abort, Api, Resource
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from json import loads
 import os
-from data import db_session, users_api, posts_api
+from data import db_session, post_resources, user_resources
 from data.users import User
 from data.messages import Messages
 from data.posts import Posts
@@ -22,24 +23,44 @@ from forms.friend import FriendForm
 
 sidebar_elements = list()
 parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'PNG', 'JPG', 'JPEG', 'GIF', 'SVG']
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
+# секретный ключ
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
     days=365
-)
+)  # время жизни сессии
+
+# обозначение папок с загружаемыми файлами
 app.config['UPLOAD_FOLDER_PROFILES'] = 'static/img/upload'
 app.config['UPLOAD_FOLDER_POSTS'] = 'static/img/upload/posts'
-run_with_ngrok(app)
-ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
+
+# инициализация апи
+api = Api(app)
+
+# инициализация логин менеджера
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+run_with_ngrok(app)
+# запуск программы с ngrok
+
 
 def main():
+    # загружаем сайдбар
     load_sidebar_elem()
+
+    # инициализация бд
     global_init("data/db/main.db")
-    app.register_blueprint(users_api.blueprint)
+
+    # добавление апи
+    api.add_resource(post_resources.PostsListResource, '/api/v2/posts')
+    api.add_resource(post_resources.PostsResource, '/api/v2/posts/<int:post_id>')
+
+    api.add_resource(user_resources.UserListResource, '/api/v2/users')
+    api.add_resource(user_resources.UserResource, '/api/v2/users/<int:user_id>')
+
     app.run()
 
 
@@ -178,21 +199,21 @@ def add_news():
 
 
 # Редактирование поста
-@app.route('/posts/id<int:id>', methods=['GET', 'POST'])
+@app.route('/posts/id<int:post_id>', methods=['GET', 'POST'])
 @login_required
-def edit_news(id):
+def edit_post(post_id):
     parameters['message'] = ""
     form = PostUpdateForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
+        post = db_sess.query(Posts).filter(Posts.id == post_id, Posts.author == current_user.id).first()
         if post:
             form.text.data = post.text
         else:
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
+        post = db_sess.query(Posts).filter(Posts.id == post_id, Posts.author == current_user.id).first()
         if post:
             post.text = form.text.data
             db_sess.commit()
@@ -205,12 +226,12 @@ def edit_news(id):
 
 
 # Удвление поста
-@app.route('/posts_delete/id<int:id>', methods=['GET', 'POST'])
+@app.route('/posts_delete/id<int:post_id>', methods=['GET', 'POST'])
 @login_required
-def news_delete(id):
+def post_delete(post_id):
     parameters['message'] = ""
     db_sess = db_session.create_session()
-    post = db_sess.query(Posts).filter(Posts.id == id, Posts.author == current_user.id).first()
+    post = db_sess.query(Posts).filter(Posts.id == post_id, Posts.author == current_user.id).first()
     if post:
         db_sess.delete(post)
         db_sess.commit()
@@ -220,12 +241,12 @@ def news_delete(id):
 
 
 # Профиль пользователя
-@app.route('/profiles/id<int:id>')
+@app.route('/profiles/id<int:user_id>')
 @login_required
-def profile(id):
+def profile(user_id):
     parameters['message'] = ""
     db_sess = db_session.create_session()
-    user1 = db_sess.query(User).filter(User.id == id).first()
+    user1 = db_sess.query(User).filter(User.id == user_id).first()
     if not user1:
         abort(404)
     parameters['title'] = f"MEGAFACEBOOK: {user1.name} {user1.surname}"
@@ -233,7 +254,7 @@ def profile(id):
     parameters['count_of_friends'] = len(list(db_sess.query(Friends).filter(
         (Friends.from_user == user1.id) | (Friends.to_user == user1.id),
         Friends.accepted == 1).all()))
-    parameters['posts'] = db_sess.query(Posts).filter(Posts.author == id).all()
+    parameters['posts'] = db_sess.query(Posts).filter(Posts.author == user_id).all()
     return render_template("profile_page.html", **parameters)
 
 
@@ -380,13 +401,13 @@ def friends():
     return render_template("friends.html", **parameters)
 
 
-@app.route("/add_friend/id<int:id>")
+@app.route("/add_friend/id<int:user_id>")
 @login_required
-def add_friend(id):
+def add_friend(user_id):
     parameters['title'] = "MEGAFACEBOOK: Добавление друга"
     parameters['message'] = ""
     from_user_id = current_user.id
-    to_user_id = id
+    to_user_id = user_id
     db_sess = db_session.create_session()
     parameters['user'] = db_sess.query(User).filter(User.id == to_user_id).first()
     # проверка на себя же :)
@@ -418,13 +439,14 @@ def add_friend(id):
         return render_template("profile_page.html", **parameters)
 
 
-@app.route("/delete_friend/id<int:id>")
+@app.route("/delete_friend/id<int:user_id>")
 @login_required
-def delete_friend(id):
+def delete_friend(user_id):
     parameters['title'] = "MEGAFACEBOOK: Удаление друга"
     parameters['message'] = ""
     db_sess = db_session.create_session()
-    friend = db_sess.query(Friends).filter((Friends.from_user == id) | (Friends.to_user == id),
+    friend = db_sess.query(Friends).filter((Friends.from_user == user_id)
+                                           | (Friends.to_user == user_id),
                                            (Friends.from_user == current_user.id)
                                            | (Friends.to_user == current_user.id)).first()
     if friend:
@@ -495,24 +517,24 @@ def messages():
 
 
 # Диалоги
-@app.route('/messages/id<int:id>', methods=['GET', 'POST'])
+@app.route('/messages/id<int:user_id>', methods=['GET', 'POST'])
 @login_required
-def messages_with_user(id):
+def messages_with_user(user_id):
     form = MessageForm()
     parameters['message'] = ""
     parameters['title'] = "MEGAFACEBOOK: Переписка"
     db_sess = db_session.create_session()
 
-    your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == id).all()
-    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == id,
+    your_messages = db_sess.query(Messages).filter(Messages.from_user == current_user.id, Messages.to_user == user_id).all()
+    pen_friend_messages = db_sess.query(Messages).filter(Messages.from_user == user_id,
                                                          Messages.to_user == current_user.id).all()
-    if current_user.id == id:
+    if current_user.id == user_id:
         pen_friend_messages = []
     all_messages = your_messages + pen_friend_messages
     all_messages = sorted(all_messages, key=lambda x: x.date)
     parameters['all_messages'] = all_messages
 
-    pen_friend = db_sess.query(User).filter(User.id == id).first()
+    pen_friend = db_sess.query(User).filter(User.id == user_id).first()
 
     parameters['pen_friend'] = pen_friend
     parameters['form'] = form
@@ -520,12 +542,12 @@ def messages_with_user(id):
     if request.method == 'POST':
         message = Messages(
             from_user=current_user.id,
-            to_user=id,
+            to_user=user_id,
             text=form.message.data
         )
         db_sess.add(message)
         db_sess.commit()
-        return redirect(f'/messages/id{id}')
+        return redirect(f'/messages/id{user_id}')
 
     return render_template('message_page.html', **parameters)
 
@@ -554,14 +576,8 @@ def unauthorized(e):
     return render_template("unauthorized.html", **parameters)
 
 
-@app.route('/favicon.ico')
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, 'static'), 'static/favicon.ico',
-                               mimetype='image/vnd.microsoft.icon')
-
-
-def return_not_me(id, id2):
-    return id if current_user.id != id else id2
+def return_not_me(user_id, id2):
+    return user_id if current_user.id != user_id else id2
 
 
 def load_sidebar_elem():
