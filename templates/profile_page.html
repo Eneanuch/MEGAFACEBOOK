@@ -7,7 +7,7 @@
         <img alt="avatar" class="profile-avatar" src="{{ url_for('static', filename='img/upload/'+ user.photo) }}">
         <h1 style="display: inline-block">{{ user.name }} {{user.surname }}</h1>
         <br>
-        <h3>Город: {{ user.city }}. Друзей: {{ count_of_friends}}</h3><br>
+        <h3>Город: {{ user.city }}. Друзей: {{ count_of_friends}}<br>Зарегистрирован с {{ user.registration_date.strftime('%Y-%m-%d') }}</h3><br>
     </div>
     {% if current_user.id != user.id %}
         <a class="btn btn-primary trans" href="/messages/id{{ user.id }}">Написать сообщение</a>
@@ -29,6 +29,9 @@
                 <br>
                 <p class="post-text">{{ i.text }}</p>
                 <img class="post-image" src="{{ url_for('static', filename='img/upload/posts/'+ i.photo) }}">
+                <div style="float: right; margin-top: 10px; width: 100%;">
+                    <a>Опубликовано {{ i.date.strftime('%h, %d, %H:%M') }}</a>
+                </div>
                 {% if user.id == current_user.id %}
                     <div style="float: right; margin-top: 10px; width: 100%;">
                         <a class="btn btn-warning trans" href="/posts/id{{ i.id }}">Редактировать</a>

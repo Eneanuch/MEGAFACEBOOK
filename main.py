@@ -30,7 +30,7 @@ app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(
 )
 app.config['UPLOAD_FOLDER_PROFILES'] = 'static/img/upload'
 app.config['UPLOAD_FOLDER_POSTS'] = 'static/img/upload/posts'
-# run_with_ngrok(app)
+run_with_ngrok(app)
 ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg']
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -225,6 +225,8 @@ def profile(id):
     parameters['message'] = ""
     db_sess = db_session.create_session()
     user1 = db_sess.query(User).filter(User.id == id).first()
+    if not user1:
+        abort(404)
     parameters['title'] = f"MEGAFACEBOOK: {user1.name} {user1.surname}"
     parameters['user'] = user1
     parameters['count_of_friends'] = len(list(db_sess.query(Friends).filter(
@@ -235,9 +237,9 @@ def profile(id):
 
 
 # Изменение общей информации
-@app.route('/profiles_update/id<int:id>', methods=['GET', 'POST'])
+@app.route('/profiles_update/', methods=['GET', 'POST'])
 @login_required
-def edit_profile(id):
+def edit_profile():
     parameters['message'] = ""
     parameters['title'] = 'Редактировать профиля'
     form = UpdateForm()
@@ -275,9 +277,9 @@ def edit_profile(id):
 
 
 # Изменение фотографии
-@app.route('/profiles_photo/id<int:id>', methods=['GET', 'POST'])
+@app.route('/profiles_photo/', methods=['GET', 'POST'])
 @login_required
-def edit_photo(id):
+def edit_photo():
     parameters['message'] = ""
     parameters['title'] = 'Изменить аватарку'
     form = PhotoForm()
@@ -311,9 +313,9 @@ def edit_photo(id):
 
 
 # Изменение пароля
-@app.route('/profiles_password/id<int:id>', methods=['GET', 'POST'])
+@app.route('/profiles_password/', methods=['GET', 'POST'])
 @login_required
-def edit_password(id):
+def edit_password():
     parameters['message'] = ""
     parameters['title'] = 'Изменить пароль'
     form = PasswordForm()

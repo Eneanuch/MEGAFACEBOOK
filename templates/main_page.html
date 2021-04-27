@@ -11,6 +11,9 @@
             <br>
             <p class="post-text">{{ i.text }}</p>
             <img class="post-image" src="{{ url_for('static', filename='img/upload/posts/'+ i.photo) }}">
+            <div style="float: right; margin-top: 10px; width: 100%;">
+                <a>Опубликовано {{ i.date.strftime('%h, %d, %H:%M') }}</a>
+            </div>
             {% if i.user.id == current_user.id %}
                 <div style="float: right; margin-top: 10px; width: 100%;">
                     <a class="btn btn-warning trans" href="/posts/id{{ i.id }}">Редактировать</a>

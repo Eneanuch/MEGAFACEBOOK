@@ -14,6 +14,7 @@
                 <img class="header-avatar" style="margin-bottom: 10px;" src="{{ url_for('static', filename='img/upload/'+ pen_friend.photo) }}">
                 <a href="/profiles/id{{ pen_friend.id }}">{{ pen_friend.name }} {{ pen_friend.surname }}</a><p class="message-text">: {{ i.text }}</p><br>
             {% endif %}
+            <a> отправлено в {{ i.date.strftime('%H:%M') }} </a>
         </div>
     {% endfor %}
     <form action="" method="post" class="message-form">

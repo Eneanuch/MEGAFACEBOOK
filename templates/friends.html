@@ -33,6 +33,7 @@
                 <img class="header-avatar" style="margin-right: 10px" src="{{ url_for('static', filename='img/upload/'+ friend.photo) }}">
                 <a style="margin-right: 10px" href="/profiles/id{{ friend.id }}">{{ friend.name }} {{friend.surname}}</a>
                 <a href="/messages/id{{ friend.id }}" class="btn btn-primary trans" style="margin-right: 20px"> Написать сообщение</a>
+                <a href="/add_friend/id{{ friend.id }}" class="btn btn-primary trans" style="margin-right: 20px">Добавить в друзья</a>
                 <br>
             </div>
         {% endfor %}
