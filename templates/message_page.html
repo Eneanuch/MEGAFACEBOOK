@@ -5,9 +5,9 @@
 <div id="message-box" class="messages_with_user">
     <h2>Переписка с {{ pen_friend.name }} {{ pen_friend.surname }}</h2>
     <a class="btn btn-primary trans" href="#down">Вниз</a>
-    <div id="content">
+    <div id="messages-all">
     {% for i in all_messages %}
-        <div id="content-mess">
+        <div id="content" class="messages">
             {% if i.from_user == current_user.id %}
                 <img class="header-avatar" style="margin-bottom: 10px;" src="{{ url_for('static', filename='img/upload/'+ current_user.photo) }}">
                 <a href="/profiles/id{{ current_user.id }}">{{ current_user.name }} {{ current_user.surname }}</a><p class="message-text">: {{ i.text }}</p><br>
@@ -35,7 +35,7 @@
 
 <script>
 setInterval(function(){
-    $("#content").load("/messages/id{{ pen_friend.id }} #content-mess")
+    $("#messages-all").load("/messages/id{{ pen_friend.id }} #content")
 },1000)
 </script>
 

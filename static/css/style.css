@@ -262,7 +262,7 @@ a {
     display: inline-block;
 
 }
-.messages_with_user div {
+.messages_with_user .messages{
     display: flex;
     margin-bottom: 10px;
     word-break: break-all;
