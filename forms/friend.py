@@ -4,5 +4,5 @@ from wtforms.validators import DataRequired
 
 
 class FriendForm(FlaskForm):
-    name = StringField('Введите имя пользователя', validators=[DataRequired()])
+    name = StringField('Введите любые данные пользователя (имя, фамилия, город)', validators=[DataRequired()])
     submit = SubmitField('Найти')

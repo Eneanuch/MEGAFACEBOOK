@@ -4,7 +4,7 @@
 
 <div class="messages_with_user">
     <h2>Переписка с {{ pen_friend.name }} {{ pen_friend.surname }}</h2>
-    <a href="#down">Вниз</a>
+    <a class="btn btn-primary trans" href="#down">Вниз</a>
     {% for i in all_messages %}
         <div>
             {% if i.from_user == current_user.id %}

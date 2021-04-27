@@ -20,10 +20,19 @@ from forms.profile_update import UpdateForm
 from forms.profile_photo import PhotoForm
 from forms.profile_password import PasswordForm
 from forms.friend import FriendForm
+import logging
+
+SIDEBAR_PATH = 'data/configs/sidebar.json'
+ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'svg',
+                      'PNG', 'JPG', 'JPEG', 'GIF', 'SVG']
+
+
+logging.basicConfig(filename='main.log',
+                    format='%(levelname)s %(asctime)s %(message)s')
 
 sidebar_elements = list()
 parameters = {"title": "MEGAFACEBOOK", "sidebar": sidebar_elements}
-ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'PNG', 'JPG', 'JPEG', 'GIF', 'SVG']
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'A231f1s9p23klbjt8'
@@ -43,16 +52,21 @@ api = Api(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-run_with_ngrok(app)
+logging.info('Loaded starter pack for app')
+
+# run_with_ngrok(app)
+
+logging.info('run with ngrok')
 # запуск программы с ngrok
 
 
 def main():
     # загружаем сайдбар
     load_sidebar_elem()
-
+    logging.info('Loaded sidebar elements')
     # инициализация бд
     global_init("data/db/main.db")
+    logging.info('Loaded database')
 
     # добавление апи
     api.add_resource(post_resources.PostsListResource, '/api/v2/posts')
@@ -61,7 +75,11 @@ def main():
     api.add_resource(user_resources.UserListResource, '/api/v2/users')
     api.add_resource(user_resources.UserResource, '/api/v2/users/<int:user_id>')
 
+    logging.info('Loaded api')
+
     app.run()
+
+    logging.info('App run!')
 
 
 #  Регистрация нового пользователя
@@ -395,7 +413,11 @@ def friends():
     if form.validate_on_submit():
         db_sess = db_session.create_session()
         name = form.name.data
-        result = db_sess.query(User).filter(User.name.like(f"%{name}%"), User.id != current_user.id).all()
+        surname = form.surname.data
+        city = form.city.date
+        result = db_sess.query(User).filter(User.name.like(f"%{name}%")
+                                            | User.surname.like(f"%{surname}%")
+                                            | User.city.like(f"%{city}%"), User.id != current_user.id).all()
         parameters['friends_find'] = result
         return render_template("friends.html", **parameters)
     return render_template("friends.html", **parameters)
@@ -582,7 +604,7 @@ def return_not_me(user_id, id2):
 
 def load_sidebar_elem():
     global sidebar_elements
-    with open("data/sidebar.json", "rt", encoding="utf8") as f:
+    with open(SIDEBAR_PATH, "rt", encoding="utf8") as f:
         sidebar_elements = loads(f.read())
         parameters['sidebar'] = sidebar_elements
 
