@@ -22,11 +22,13 @@ span {
 }
 
 footer {
+    position: fixed;
+    bottom: 0px;
     display: block;
     width: 100%;
     color: #fff;
     background-image: linear-gradient(-225deg, #3D4E81 0%, #5753C9 48%, #6E7FF3 100%);
-    height: 50px;
+    height: 20px;
 }
 a {
 
